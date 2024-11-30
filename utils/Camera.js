@@ -4,7 +4,7 @@ class Camera {
     return degrees * Math.PI / 180.0;
   }
   constructor(pos = { x: 0, y: 0, z: 1 }, coi = { x: 0, y: 0, z: 0 },
-              up = { x: 0, y: 1, z: 0 }) {
+    up = { x: 0, y: 1, z: 0 }) {
     this.pos = pos;
     this.coi = coi;
     this.up = up;
@@ -14,7 +14,7 @@ class Camera {
 
     this.theta = Math.atan2(direction.z, direction.x);
     this.phi = Math.atan2(direction.y, direction.z);
-    
+
   }
 
   /** */
@@ -29,7 +29,7 @@ class Camera {
     this.phi = angles.phi;
   }
 
-  
+
 
   /** */
   rotate(init_mouse, current_mouse) {
@@ -43,8 +43,6 @@ class Camera {
         * Math.sin(angles.theta)
     };
   }
-
-  
 
   /** */
   getAngles(init_mouse, current_mouse) {
@@ -75,7 +73,7 @@ class Camera {
       initial_mouse_position = getMousePositionInElement(evt, canvas);
       canvas.onpointermove = (evt) => {
         this.rotate(initial_mouse_position,
-                    getMousePositionInElement(evt, canvas));
+          getMousePositionInElement(evt, canvas));
         draw_callback();
       }
     };
