@@ -1,5 +1,9 @@
 let epsilon = 0.000001;
 
+function radians( degrees ) {
+  return degrees * Math.PI / 180.0;
+}
+
 /** 
  * La clase Vector3 representa vectores de tres componentes, x, y y z.
  */

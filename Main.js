@@ -3,8 +3,10 @@
 window.addEventListener("load", async function (evt) {
   let canvas = document.getElementById("the_canvas");
   const gl = canvas.getContext("webgl2");
+  // set variable canvas height, as window height 
   gl.canvas.width  = window.innerWidth;
   gl.canvas.height = window.innerHeight;
+
   if (!gl) throw "WebGL no soportado";
 
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -20,8 +22,14 @@ window.addEventListener("load", async function (evt) {
 
 
   //-----------------------------
-
-  var eye = new Vector3(5.0, 15.0, 40.0);
+  
+  var cameraRadius = 20.0;
+  var THETA = radians(45);
+  var PHI = radians(45);                                
+  //var eye = new Vector3(5.0, 15.0, 40.0);
+  var eye = new Vector3(cameraRadius*Math.sin(PHI)*Math.sin(THETA),
+  cameraRadius*Math.cos(PHI),
+  cameraRadius*Math.sin(PHI)*Math.cos(THETA));
   var at = new Vector3(0.0, 0.0, 1.0);
   var up = new Vector3(0.0, 1.0, 0.0);
   let camera = new Camera(eye, at, up);
