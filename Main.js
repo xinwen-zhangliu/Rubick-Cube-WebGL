@@ -3,7 +3,8 @@
 window.addEventListener("load", async function (evt) {
   let canvas = document.getElementById("the_canvas");
   const gl = canvas.getContext("webgl2");
-
+  gl.canvas.width  = window.innerWidth;
+  gl.canvas.height = window.innerHeight;
   if (!gl) throw "WebGL no soportado";
 
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
