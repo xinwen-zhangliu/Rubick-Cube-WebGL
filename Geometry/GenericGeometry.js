@@ -138,8 +138,8 @@ class GenericGeometry {
   draw(gl, projectionMatrix, viewMatrix, light) {
     gl.useProgram(this.material.program);
 
-    let viewModelMatrix = Matrix4.multiply(viewMatrix, this.transform).toArray();
-    let projectionViewModelMatrix = Matrix4.multiply(projectionMatrix, viewModelMatrix).toArray();
+    let viewModelMatrix = multiply(viewMatrix, this.transform);
+    let projectionViewModelMatrix = multiply(projectionMatrix, viewModelMatrix);
 
     // u_VM_matrix
     if (this.material.getUniform("u_VM_matrix") != undefined) {
@@ -228,9 +228,9 @@ class GenericGeometry {
   drawMaterial(gl, material, projectionMatrix, viewMatrix, light) {
     gl.useProgram(material.program);
 
-    let viewModelMatrix = Matrix4.multiply(viewMatrix, this.transform).toArray();
-    let projectionViewModelMatrix = Matrix4.multiply(projectionMatrix, viewModelMatrix).toArray();
-    
+    let viewModelMatrix = multiply(viewMatrix, this.transform);
+    let projectionViewModelMatrix = multiply(projectionMatrix, viewModelMatrix);
+
     // u_VM_matrix
     if (material.getUniform("u_VM_matrix") != undefined) {
       gl.uniformMatrix4fv(material.getUniform("u_VM_matrix"), true, viewModelMatrix);
@@ -368,35 +368,36 @@ class GenericGeometry {
       v2 = { x: vertices[i2], y: vertices[i2 + 1], z:vertices[i2 + 2] };
       v3 = { x: vertices[i3], y: vertices[i3 + 1], z: vertices[i3 + 2] };
 
-      n = Vector3.cross(Vector3.subtract(v1, v2), Vector3.subtract(v2,
-                                                                   v3)).normalize();
+      n = normalize(
+        cross(subtract(v1, v2), subtract(v2, v3))
+      );
 
       tmp = { x: normals[i1], y: normals[i1+1], z: normals[i1+2] };
-      tmp = Vector3.add(tmp, n);
+      tmp = add(tmp, n);
       normals[i1  ] = tmp.x;
       normals[i1+1] = tmp.y;
       normals[i1+2] = tmp.z;
 
 
       tmp = { x: normals[i2], y: normals[i2+1], z: normals[i2+2] };
-      tmp = Vector3.add(tmp, n);
+      tmp = add(tmp, n);
       normals[i2  ] = tmp.x;
       normals[i2+1] = tmp.y;
       normals[i2+2] = tmp.z;
 
 
       tmp = { x: normals[i3], y: normals[i3+1], z: normals[i3+2] };
-      tmp = Vector3.add(tmp, n);
+      tmp = add(tmp, n);
       normals[i3  ] = tmp.x;
       normals[i3+1] = tmp.y;
       normals[i3+2] = tmp.z;
     }
 
-    for (let i = 0; i < normals.length; i += 3) {
-      tmp = new Vector3(normals[i], normals[i + 1], normals[i + 2]).normalize();
-      normals[i] = tmp.x;
-      normals[i + 1] = tmp.y;
-      normals[i + 2] = tmp.z;
+    for (let i=0; i<normals.length; i+=3) {
+      tmp = normalize({ x: normals[i], y: normals[i+1], z: normals[i+2] });
+      normals[i  ] = tmp.x;
+      normals[i+1] = tmp.y;
+      normals[i+2] = tmp.z;
     }
 
     return normals;
@@ -431,7 +432,9 @@ class GenericGeometry {
       v2 = { x: vertices[i+3], y: vertices[i+4], z: vertices[i+5] };
       v3 = { x: vertices[i+6], y: vertices[i+7], z: vertices[i+8] };
 
-      n = (Vector3.cross(Vector3.subtract(v1, v2), Vector3.subtract(v2, v3))).normalize();
+      n = normalize(
+        cross(subtract(v1, v2), subtract(v2, v3))
+      );
 
       normals.push(
         n.x, n.y, n.z, 

@@ -1,53 +1,57 @@
-class PrismaRectangular extends GenericGeometry {
+class Cubo extends GenericGeometry {
   /**
-   * Prisma Rectangular
-   * @param {Number} width el ancho corresponde a la dimensión en el eje X
-   * @param {Number} height el alto corresponde a la dimensión en el eje Y
-   * @param {Number} length la profundidad corresponde a la dimensión en
-   * el eje Z
    */
-  constructor(gl, width = 1, height = 1, length = 1, material, transform = identity()) {
+  constructor(gl, material=new FlatMaterial(gl), transform=identity()) {
     super(gl, material, transform);
-
-    this.w = width;
-    this.h = height;
-    this.l = length;
 
     this.init(gl);
   }
 
-  getVertices() {
+  /**
+   */
+   getVertices() {
     return [
-      -this.w / 2, this.h / 2, this.l / 2,
-      -this.w / 2, -this.h / 2, this.l / 2,
-      -this.w / 2, this.h / 2, -this.l / 2,
-      -this.w / 2, -this.h / 2, -this.l / 2,
-      this.w / 2, this.h / 2, this.l / 2,
-      this.w / 2, -this.h / 2, this.l / 2,
-      this.w / 2, this.h / 2, -this.l / 2,
-      this.w / 2, -this.h / 2, -this.l / 2,
-    ];
-  }
+       1,  1,  1, 
+      -1, -1,  1, 
+       1, -1,  1, 
+       1,  1,  1, 
+      -1,  1,  1, 
+      -1, -1,  1, 
 
-  getFaces() {
-    return [
-      2, 3, 1,
-      2, 1, 0,
+       1,  1, -1, 
+       1, -1,  1, 
+       1, -1, -1, 
+       1,  1, -1, 
+       1,  1,  1, 
+       1, -1,  1, 
+ 
+      -1,  1, -1, 
+       1, -1, -1, 
+      -1, -1, -1, 
+      -1,  1, -1, 
+       1,  1, -1, 
+       1, -1, -1, 
 
-      1, 5, 4,
-      1, 4, 0,
+      -1,  1,  1, 
+      -1, -1, -1, 
+      -1, -1,  1, 
+      -1,  1,  1, 
+      -1,  1, -1,
+      -1, -1, -1, 
+  
+       1, -1,  1, 
+      -1, -1, -1, 
+       1, -1, -1, 
+       1, -1,  1, 
+      -1, -1,  1, 
+      -1, -1, -1, 
 
-      5, 7, 6,
-      5, 6, 4,
-
-      6, 7, 3,
-      6, 3, 2,
-
-      4, 6, 2,
-      4, 2, 0,
-
-      3, 7, 5,
-      3, 5, 1
+       1,  1, -1, 
+      -1,  1,  1, 
+       1,  1,  1, 
+       1,  1, -1, 
+      -1,  1, -1, 
+      -1,  1,  1,
     ];
   }
 

@@ -8,7 +8,7 @@ class LuzPuntual {
   }
 
   update(viewMatrix) {
-    this.position_transform = viewMatrix.multiplyVector(this.position);
+    this.position_transform = multiplyVector(viewMatrix, this.position);
   }
 
   getPosition() {
