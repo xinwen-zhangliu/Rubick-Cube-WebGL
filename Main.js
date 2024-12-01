@@ -122,7 +122,7 @@ window.addEventListener("load", async function(evt) {
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       for (let k = -1; k <= 1; k++) {
-        let viewMatrix = translate(i * 2.1, j * 2.1, k * 2.1);
+        let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
         cubePosition[i + 1][j + 1][k + 1][0] = i;
         cubePosition[i + 1][j + 1][k + 1][1] = j;
         cubePosition[i + 1][j + 1][k + 1][2] = k;
@@ -136,27 +136,12 @@ window.addEventListener("load", async function(evt) {
           new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
           viewMatrix
         ));
-        // cubePosition.push({
-        //   x: i,
-        //   y: j,
-        //   z: k,
-        //   viewMatrix: viewMatrix,
-        //   rotationMatrix: [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
-        // });
       }
     }
   }
 
 
-  // for (let i = 0; i < 28; i++) {
-  //   geometry.push(new Cubo(
-  //     gl,
-  //     //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
-  //     new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-  //     cubePosition[i].viewMatrix
-  //   ));
-    
-  // }
+
 
   function getRotationAxis(x,y,z){
     return cubePosition[x+1][y+1][z+1][3];
@@ -187,15 +172,7 @@ window.addEventListener("load", async function(evt) {
         for (let k = -1; k <= 1; k++) {
           var tmp = viewMatrix;
           viewMatrix = multiply(viewMatrix, getRotationMatrix(i,j,k));
-          viewMatrix = multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][4]);
-
-          // let temp = viewMatrix;
-          // viewMatrix = 
-          // viewMatrix = cubePosition[i + 1][j + 1][k + 1][3];
-          // rotationMatrix = cubePosition[i + 1][j + 1][k + 1][4];
-          // temp = multiply(viewMatrix, rotationMatrix);
-          
-          //updatedViewMatrix.push(multiply(temp, viewMatrix));
+          viewMatrix = multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3]);
           updatedViewMatrix.push(viewMatrix);
           viewMatrix = tmp;
         }
@@ -228,8 +205,6 @@ window.addEventListener("load", async function(evt) {
     // Se dibujan los objetos de forma usual
     for (let i=0; i<geometry.length; i++) {
       // // Update rotation and translation for each cube in the grid
-      // let updatedViewMatrix = multiply(viewMatrix, rotationMatrix);
-      // updatedViewMatrix = multiply(updatedViewMatrix, positionMatrix);
       geometry[i].draw(gl, projectionMatrix, updatedViewMatrix[i], light);
 
       // Se dibuja el borde del objeto seleccionado
@@ -295,13 +270,13 @@ window.addEventListener("load", async function(evt) {
       // console.log("cubo");
       let layer = Math.floor(pixelColor[0]/9);
       console.log(layer);
-      if (layer == 0 ){
-        turnFace("L");
-      }else if(layer == 1){
-        turnFace("U");
-      }else {
-        turnFace("F");
-      }
+      // if (layer == 0 ){
+      //   turnFace("L");
+      // }else if(layer == 1){
+      //   turnFace("U");
+      // }else {
+      //   turnFace("F");
+      // }
 
       
       last_picked = pixelColor[0];
