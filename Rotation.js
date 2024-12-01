@@ -15,106 +15,90 @@
  * with the same letters but lowerscase.
  */
 
-var LRotate = ["L","F","R","K","L","F","R","K"];
-var MRotate = ["M","S","m","s","M","S","m","s"];
-var RRotate = ["R","K","L","F","R","K","L","F"];
-var TRotate = ["B","B","B","B","T","T","T","T"];
-var ERotate = ["e","e","e","e","E","E","E","E"];
-var BRotate = ["T","T","T","T","B","B","B","B"];
-var FRotate = ["K","L","F","R","F","R","K","L"];
-var SRotate = ["s","M","S","m","S","m","s","M"];
-var KRotate = ["F","R","K","L","K","L","F","R"];
-var lRotate = ["l","f","r","k","l","f","r","k"];
-var mRotate = ["m","s","M","S","m","s","M","S"];
-var rRotate = ["r","k","l","f","r","k","l","f"];
-var tRotate = ["b","b","b","b","t","t","t","t"];
-var eRotate = ["E","E","E","E","e","e","e","e"];
-var bRotate = ["t","t","t","t","b","b","b","b"];
-var fRotate = ["k","l","f","r","f","r","k","l"];
-var sRotate = ["S","m","s","M","s","M","S","m"];
-var kRotate = ["f","r","k","l","k","l","f","r"];
+/**
+ * There are 3 axis 
+ * 0 X
+ *      L M R 
+ * 1 Y
+ *      U E D
+ * 2 Z
+ *      F S B
+ * 
+ */
+// var moves = [
+//     "U", "D", "R", "L", "F", "B",
+//     "u", "d", "r", "l", "f", "b",
+//     "M", "E", "S",
+//     "m", "e", "s",
+// ];
 
-function correctFace(face){
-    var newFace;
-    var theta = (THETA/ Math.PI * 180.0)%360;
-    var phi = (PHI/ Math.PI * 180.0)%360;
-    var i;
-    if ((phi >= -180 && phi < 0) || (phi >= 180 && phi < 360)){
-      if (theta < -315 || (theta >= -45 && theta < 45) || theta >= 315){
-        i = 0;
-      } else if ((theta >= -315 && theta < -225) || (theta >= 45 && theta < 135)){
-        i = 1;
-      } else if ((theta >= -225 && theta < -135) || (theta >=135 && theta < 225)){
-        i = 2;
-      } else if ((theta >= -135 && theta < -45) || (theta >= 215 && theta < 315)){
-        i = 3;
-      }
-    } else{
-      if (theta < -315 || (theta >= -45 && theta < 45) || theta >= 315){
-        i = 4;
-      } else if ((theta >= -315 && theta < -225) || (theta >= 45 && theta < 135)){
-        i = 5;
-      } else if ((theta >= -225 && theta < -135) || (theta >=135 && theta < 225)){
-        i = 6;
-      } else if ((theta >= -135 && theta < -45) || (theta >= 215 && theta < 315)){
-        i = 7;;
+var moves = [
+    "L", "M", "R",
+    "U", "E", "D",
+    "F", "S", "B"
+];
+
+function getMousePositionInElement(evt, element) {
+    const rect = element.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+function rotation(face) {
+    turnFace(face);
+    currentAngle += rotationAngle;
+    if (currentAngle == 90) {
+        // Reset parameters
+        clearInterval(interval);
+        isAnimating = false;
+        currentAngle = 0;
+        updatePosition(face);
+        //   if (check()) {
+        //     document.getElementById("status").innerHTML = "Solved!";
+        //   } else {
+        //     document.getElementById("status").innerHTML = "Not Solved.";
+        //   }
+    }
+}
+
+function turnFace(move) {
+    var x,y,z;
+    var dir,value;
+    var mainAxis;
+    var m;
+    if ( move = move.toLowerCase()){
+        dir = 0;
+    }else {
+        dir = 1;
+    }
+
+    if ( move.toUpperCase() == "L" || move.toUpperCase() == "M" || move.toUpperCase() == "R"){
+        mainAxis = 0;
+    }else if( move.toUpperCase() == "U" || move.toUpperCase() == "E" || move.toUpperCase() == "D"){
+        mainAxis = 1;
+    }else {
+        mainAxis = 2;
+    }
+
+    
+    for (x = -1; x < 2; x++) {
+      for (y = -1; y < 2; y++) {
+        for (z = -1; z < 2; z++) {
+          // check if cubie is in the plane of the face being turned
+          if (cubePosition[x+1][y+1][z+1][mainAxis] == value) {
+            m = getRotationMatrix(x,y,z);
+            if (!dir) {
+              m = mult(m,rotate(rotationAngle,
+                              getRotationAxis(x,y,z)[mainAxis]));
+            } else {
+              m = mult(m,rotate(rotationAngle,
+                              negate(getRotationAxis(x,y,z)[mainAxis])));
+            }
+            setRotationMatrix(x,y,z,m);
+          }
+        }
       }
     }
-    switch(face){
-      case "L":
-        newFace = LRotate[i];;
-      break;
-      case "l":
-        newFace = lRotate[i];;
-      break;
-      case "M":
-        newFace = MRotate[i];;
-      break;
-      case "m":
-        newFace = mRotate[i];;
-      break;
-      case "R":
-        newFace = RRotate[i];;
-      break;
-      case "r":
-        newFace = rRotate[i];;
-      break;
-      case "T":
-        newFace = TRotate[i];;
-      break;
-      case "t":
-        newFace = tRotate[i];;
-      break;
-      case "B":
-        newFace = BRotate[i];;
-      break;
-      case "b":
-        newFace = bRotate[i];;
-      break;
-      case "E":
-        newFace = ERotate[i];;
-      break;
-      case "e":
-        newFace = eRotate[i];;
-      break;
-      case "F":
-        newFace = FRotate[i];;
-      break;
-      case "f":
-        newFace = fRotate[i];;
-      break;
-      case "K":
-        newFace = KRotate[i];;
-      break;
-      case "k":
-        newFace = kRotate[i];;
-      break;
-      case "S":
-        newFace = SRotate[i];;
-      break;
-      case "s":
-        newFace = sRotate[i];;
-      break;
-    }
-    return newFace;
   }

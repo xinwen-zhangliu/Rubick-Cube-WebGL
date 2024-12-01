@@ -1,5 +1,5 @@
 class PhongMaterial extends Material {
-  constructor(gl, Ka=[0,0,0], Kd=[0,0,0], Ks=[0,0,0], shininess=1) {
+  constructor(gl, Ka=[0,0,0], Kd=[0,0,0], Ks=[0,0,0], shininess=1, opacidad=1) {
     let vertexShaderSource =
     `#version 300 es
     in vec4 a_position;
@@ -39,6 +39,7 @@ class PhongMaterial extends Material {
       vec3 Kd;
       vec3 Ks;
       float shininess;
+      float opacity;
     };
 
     // La luz se vuelve una instancia de la estructura Light
@@ -75,7 +76,7 @@ class PhongMaterial extends Material {
       vec3 diffuse_color = difuso(L, N);
       vec3 specular_color = especular(L, N);
 
-      pixelColor = vec4(ambient_color + diffuse_color + specular_color, 1.0);
+      pixelColor = vec4(ambient_color + diffuse_color + specular_color, u_material.opacity);
     }`;
 
     // Se llama al constructor de la clase Material
@@ -85,6 +86,6 @@ class PhongMaterial extends Material {
     this.Kd = Kd;
     this.Ks = Ks;
     this.shininess = shininess;
-
+    this.opacity = opacidad;
   }
 }

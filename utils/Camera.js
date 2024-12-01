@@ -69,11 +69,21 @@ class Camera {
     let initial_mouse_position = null;
 
     canvas.onpointerdown = (evt) => {
+      var clicker = clicker = evt.button;;
       canvas.setPointerCapture(evt.pointerId);
       initial_mouse_position = getMousePositionInElement(evt, canvas);
+      
       canvas.onpointermove = (evt) => {
-        this.rotate(initial_mouse_position,
-          getMousePositionInElement(evt, canvas));
+        var mousePos = getMousePositionInElement(evt, canvas)
+        // right click will trigger face rotation
+        if (clicker == 2){
+          // normalize the mouse position into NDC
+          const ndcX = (mousePos.x / canvas.width) * 2 - 1;  // NDC X from -1 to 1
+          const ndcY = -(mousePos.y / canvas.height) * 2 + 1; // NDC Y from -1 to 1
+          const rayClipSpace = [ndcX, ndcY, -1, 1];
+
+        }
+        this.rotate(initial_mouse_position, mousePos);
         draw_callback();
       }
     };
