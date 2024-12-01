@@ -3,8 +3,8 @@
  * @param {number} args 
  * @returns array of arguments
  */
-function _argumentsToArray( args ){
-    return [].concat.apply( [], Array.prototype.slice.apply(args) );
+function _argumentsToArray(args) {
+  return [].concat.apply([], Array.prototype.slice.apply(args));
 }
 
 // /**
@@ -44,34 +44,33 @@ function _argumentsToArray( args ){
  * Constructor for a vector of len 4
  * @returns vector of length 4
  */
-function vec4(){
-    var result = _argumentsToArray( arguments );
+function vec4() {
+  var result = _argumentsToArray(arguments);
 
-    switch ( result.length ) {
-    case 0: result.push( 0.0 );
-    case 1: result.push( 0.0 );
-    case 2: result.push( 0.0 );
-    case 3: result.push( 1.0 );
-    }
+  switch (result.length) {
+    case 0: result.push(0.0);
+    case 1: result.push(0.0);
+    case 2: result.push(0.0);
+    case 3: result.push(1.0);
+  }
 
-    return result.splice( 0, 4 );
+  return result.splice(0, 4);
 }
 
 /**
  * Constructur vector size 3
  * @returns vector size 3
  */
-function vec3()
-{
-    var result = _argumentsToArray( arguments );
+function vec3() {
+  var result = _argumentsToArray(arguments);
 
-    switch ( result.length ) {
-    case 0: result.push( 0.0 );
-    case 1: result.push( 0.0 );
-    case 2: result.push( 0.0 );
-    }
+  switch (result.length) {
+    case 0: result.push(0.0);
+    case 1: result.push(0.0);
+    case 2: result.push(0.0);
+  }
 
-    return result.splice( 0, 3 );
+  return result.splice(0, 3);
 }
 
 /**
@@ -79,7 +78,7 @@ function vec3()
  * @param {number} degrees 
  * @returns radians
  */
-function radians( degrees ) {
+function radians(degrees) {
   return degrees * Math.PI / 180.0;
 }
 
@@ -111,11 +110,27 @@ function translate(tx, ty, tz) {
  */
 function scale(sx, sy, sz) {
   return [
-    sx, 0,  0,  0,
-    0, sy,  0,  0,
-    0,  0, sz,  0,
-    0,  0,  0,  1
+    sx, 0, 0, 0,
+    0, sy, 0, 0,
+    0, 0, sz, 0,
+    0, 0, 0, 1
   ];
+}
+
+function rotate(rad, axis) {
+  switch (axis) {
+    case 0:
+      rotateX(rad);
+      break;
+    case 1:
+      rotateY(rad);
+      break;
+    case 2:
+      rotateZ(rad);
+      break;
+    default:
+      console.log("Wrong axis");
+  }
 }
 
 /**
@@ -126,10 +141,10 @@ function rotateX(rad) {
   let s = Math.sin(rad);
 
   return [
-    1, 0,  0, 0,
+    1, 0, 0, 0,
     0, c, -s, 0,
-    0, s,  c, 0,
-    0, 0,  0, 1
+    0, s, c, 0,
+    0, 0, 0, 1
   ];
 }
 
@@ -141,10 +156,10 @@ function rotateY(rad) {
   let s = Math.sin(rad);
 
   return [
-     c, 0, s, 0,
-     0, 1, 0, 0,
+    c, 0, s, 0,
+    0, 1, 0, 0,
     -s, 0, c, 0,
-     0, 0, 0, 1
+    0, 0, 0, 1
   ];
 }
 
@@ -157,9 +172,9 @@ function rotateZ(rad) {
 
   return [
     c, -s, 0, 0,
-    s,  c, 0, 0,
-    0,  0, 1, 0,
-    0,  0, 0, 1
+    s, c, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
   ];
 }
 
@@ -179,8 +194,8 @@ function cross(a, b) {
  */
 function add(a, b) {
   return {
-    x: a.x + b.x, 
-    y: a.y + b.y, 
+    x: a.x + b.x,
+    y: a.y + b.y,
     z: a.z + b.z
   };
 }
@@ -190,8 +205,8 @@ function add(a, b) {
  */
 function subtract(a, b) {
   return {
-    x: a.x - b.x, 
-    y: a.y - b.y, 
+    x: a.x - b.x,
+    y: a.y - b.y,
     z: a.z - b.z
   };
 }
@@ -200,7 +215,7 @@ function subtract(a, b) {
  * Distancia entre dos puntos
  */
 function distance(a, b) {
-  return Math.sqrt( Math.pow(b.x-a.x, 2) + Math.pow(b.y-a.y, 2) + Math.pow(b.z-a.z, 2) );
+  return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) + Math.pow(b.z - a.z, 2));
 }
 
 /**
@@ -211,12 +226,12 @@ function normalize(v) {
 
   if (length > 0.00001) {
     return {
-      x: v.x/length,
-      y: v.y/length,
-      z: v.z/length
+      x: v.x / length,
+      y: v.y / length,
+      z: v.z / length
     };
   } else {
-    return { x:0, y:0, z:0 };
+    return { x: 0, y: 0, z: 0 };
   }
 }
 
@@ -232,7 +247,7 @@ function lookAt(cameraPos, coi, up) {
     u.x, u.y, u.z, 0,
     v.x, v.y, v.z, 0,
     w.x, w.y, w.z, 0,
-    0,   0,   0,   1
+    0, 0, 0, 1
   ];
   let trans = [
     1, 0, 0, -cameraPos.x,
@@ -248,13 +263,13 @@ function lookAt(cameraPos, coi, up) {
  * Proyección en perspectiva
  */
 function perspective(theta, aspect, n, f) {
-  let c = 1 / Math.tan(theta/2);
+  let c = 1 / Math.tan(theta / 2);
 
   return [
-    c/aspect, 0,  0,            0,
-    0,        c,  0,            0,
-    0,        0, -(f+n)/(f-n), -(2*n*f)/(f-n),
-    0,        0, -1,            0
+    c / aspect, 0, 0, 0,
+    0, c, 0, 0,
+    0, 0, -(f + n) / (f - n), -(2 * n * f) / (f - n),
+    0, 0, -1, 0
   ];
 }
 
@@ -267,10 +282,10 @@ function multiplyVector(M, v) {
   }
 
   return {
-    x: M[0]*v.x  + M[1]*v.y  + M[2]*v.z  + M[3]*v.w,
-    y: M[4]*v.x  + M[5]*v.y  + M[6]*v.z  + M[7]*v.w,
-    z: M[8]*v.x  + M[9]*v.y  + M[10]*v.z + M[11]*v.w,
-    w: M[12]*v.x + M[13]*v.y + M[14]*v.z + M[15]*v.w,
+    x: M[0] * v.x + M[1] * v.y + M[2] * v.z + M[3] * v.w,
+    y: M[4] * v.x + M[5] * v.y + M[6] * v.z + M[7] * v.w,
+    z: M[8] * v.x + M[9] * v.y + M[10] * v.z + M[11] * v.w,
+    w: M[12] * v.x + M[13] * v.y + M[14] * v.z + M[15] * v.w,
   };
 }
 
@@ -313,16 +328,16 @@ function multiply(a, b) {
   let b33 = b[15];
 
   let res = [];
-  res[0]  = a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30;
-  res[1]  = a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31;
-  res[2]  = a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32;
-  res[3]  = a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33;
-  res[4]  = a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30;
-  res[5]  = a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31;
-  res[6]  = a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32;
-  res[7]  = a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33;
-  res[8]  = a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30;
-  res[9]  = a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31;
+  res[0] = a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30;
+  res[1] = a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31;
+  res[2] = a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32;
+  res[3] = a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33;
+  res[4] = a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30;
+  res[5] = a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31;
+  res[6] = a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32;
+  res[7] = a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33;
+  res[8] = a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30;
+  res[9] = a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31;
   res[10] = a20 * b02 + a21 * b12 + a22 * b22 + a23 * b32;
   res[11] = a20 * b03 + a21 * b13 + a22 * b23 + a23 * b33;
   res[12] = a30 * b00 + a31 * b10 + a32 * b20 + a33 * b30;

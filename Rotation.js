@@ -33,72 +33,127 @@
 // ];
 
 var moves = [
-    "L", "M", "R",
-    "U", "E", "D",
-    "F", "S", "B"
+  "L", "M", "R",
+  "U", "E", "D",
+  "F", "S", "B"
 ];
 
 function getMousePositionInElement(evt, element) {
-    const rect = element.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
+  const rect = element.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
 }
 
 function rotation(face) {
-    turnFace(face);
-    currentAngle += rotationAngle;
-    if (currentAngle == 90) {
-        // Reset parameters
-        clearInterval(interval);
-        isAnimating = false;
-        currentAngle = 0;
-        updatePosition(face);
-        //   if (check()) {
-        //     document.getElementById("status").innerHTML = "Solved!";
-        //   } else {
-        //     document.getElementById("status").innerHTML = "Not Solved.";
-        //   }
-    }
+  turnFace(face);
+  currentAngle += rotationAngle;
+  if (currentAngle == 90) {
+    // Reset parameters
+    clearInterval(interval);
+    isAnimating = false;
+    currentAngle = 0;
+    updatePosition(face);
+  }
 }
 
-function turnFace(move) {
-    var x,y,z;
-    var dir,value;
-    var mainAxis;
-    var m;
-    if ( move = move.toLowerCase()){
-        dir = 0;
-    }else {
-        dir = 1;
+function turnCube(cube){
+  let plane = Math.floor(cube/9);
+  for (let i = 0; i < cubePosition.length; i++){
+    if (cubePosition[i]){
     }
+  }
+  switch (axis) {
+    case 0:
+      rotateX(rad);
+      break;
+    case 1:
+      rotateY(rad);
+      break;
+    case 2:
+      rotateZ(rad);
+      break;
+    default:
+      console.log("Wrong axis");
+  }
 
-    if ( move.toUpperCase() == "L" || move.toUpperCase() == "M" || move.toUpperCase() == "R"){
-        mainAxis = 0;
-    }else if( move.toUpperCase() == "U" || move.toUpperCase() == "E" || move.toUpperCase() == "D"){
-        mainAxis = 1;
-    }else {
-        mainAxis = 2;
+}
+
+
+function turnFace(move ) {
+  var x, y, z;
+  var dir, value;
+  var mainAxis;
+  var m;
+  
+  
+  
+  if (move = move.toLowerCase()) {
+    dir = 0;
+  } else {
+    dir = 1;
+  }
+
+  if (move.toUpperCase() == "L" || move.toUpperCase() == "M" || move.toUpperCase() == "R") {
+    mainAxis = 0;
+    switch (move.toUpperCase()) {
+      case "L":
+        value = -1;
+        break;
+      case "M":
+        value = 0;
+        break;
+      case "R":
+        value = 1;
+        break;
     }
+  } else if (move.toUpperCase() == "U" || move.toUpperCase() == "E" || move.toUpperCase() == "D") {
+    mainAxis = 1;
+    switch (move.toUpperCase()) {
+      case "U":
+        value = -1;
+        break;
+      case "E":
+        value = 0;
+        break;
+      case "D":
+        value = 1;
+        break;
+    }
+  } else {
+    mainAxis = 2;
+    switch (move.toUpperCase()) {
+      case "F":
+        value = -1;
+        break;
+      case "S":
+        value = 0;
+        break;
+      case "B":
+        value = 1;
+        break;
+    }
+  }
 
-    
-    for (x = -1; x < 2; x++) {
-      for (y = -1; y < 2; y++) {
-        for (z = -1; z < 2; z++) {
-          // check if cubie is in the plane of the face being turned
-          if (cubePosition[x+1][y+1][z+1][mainAxis] == value) {
-            m = getRotationMatrix(x,y,z);
-            if (!dir) {
-              m = mult(m,rotate(rotationAngle,
-                              getRotationAxis(x,y,z)[mainAxis]));
-            } else {
-              m = mult(m,rotate(rotationAngle,
-                              negate(getRotationAxis(x,y,z)[mainAxis])));
-            }
-            setRotationMatrix(x,y,z,m);
+
+  for (x = -1; x < 2; x++) {
+    for (y = -1; y < 2; y++) {
+      for (z = -1; z < 2; z++) {
+        
+        // check if cubie is in the plane of the face being turned
+        if (cubePosition[x + 1][y + 1][z + 1][mainAxis] == value) {
+          m = getRotationMatrix(x, y, z);
+          if (!dir) {
+            m = multiply(m, rotate(rotationAngle,
+              getRotationAxis(x, y, z)[mainAxis]));
+          } else {
+            m = multiply(m, rotate(rotationAngle,
+              negate(getRotationAxis(x, y, z)[mainAxis])));
           }
+          setRotationMatrix(x, y, z, m);
         }
       }
     }
   }
+}

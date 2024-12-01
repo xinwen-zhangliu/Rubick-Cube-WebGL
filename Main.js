@@ -9,7 +9,7 @@ window.addEventListener("load", async function(evt) {
   
   
   
-  
+  let viewMatrix;
 
   let projectionMatrix = perspective(75 * Math.PI / 180, gl.canvas.width / gl.canvas.height, 1, 2000);
 
@@ -102,48 +102,77 @@ window.addEventListener("load", async function(evt) {
   var up = (0.0, 1.0, 0.0);
   
 
+    // textura 
+    let texCubo = await loadImage("texturas/prisma_rectangular.png");
+    let geometry = [];
+    
+
   let camera = new OrbitCamera(
     eye, // posición
     { x:0, y:0, z:0 }, // centro de interés
     { x:0, y:1, z:0 }, // vector hacia arriba
   );
   // There are 27 little cubes in a 3x3x3 Rubik's cube, we set the positions of each cube 
-  var cubePosition = [];
+  // var cubePosition = [];
+  var cubePosition = [
+    [[[],[],[]],[[],[],[]],[[],[],[]]],
+    [[[],[],[]],[[],[],[]],[[],[],[]]],
+    [[[],[],[]],[[],[],[]],[[],[],[]]]
+  ];
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       for (let k = -1; k <= 1; k++) {
-        let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
-        cubePosition.push({
-          x: i,
-          y: j,
-          z: k,
-          viewMatrix: viewMatrix,
-          rotationMatrix: [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
-        });
+        let viewMatrix = translate(i * 2.1, j * 2.1, k * 2.1);
+        cubePosition[i + 1][j + 1][k + 1][0] = i;
+        cubePosition[i + 1][j + 1][k + 1][1] = j;
+        cubePosition[i + 1][j + 1][k + 1][2] = k;
+        cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
+        cubePosition[i + 1][j + 1][k + 1][4] = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+        
+
+        geometry.push(new Cubo(
+          gl,
+          //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
+          new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
+          viewMatrix
+        ));
+        // cubePosition.push({
+        //   x: i,
+        //   y: j,
+        //   z: k,
+        //   viewMatrix: viewMatrix,
+        //   rotationMatrix: [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+        // });
       }
     }
   }
 
-  // textura 
-  let texCubo = await loadImage("texturas/prisma_rectangular.png");
-  let geometry = [];
-  
-  for (let i = 0; i < 27; i++) {
-    geometry.push(new Cubo(
-      gl,
-      //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
-      new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-      cubePosition[i].viewMatrix
-    ));
-    
-  }
 
+  // for (let i = 0; i < 28; i++) {
+  //   geometry.push(new Cubo(
+  //     gl,
+  //     //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
+  //     new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
+  //     cubePosition[i].viewMatrix
+  //   ));
+    
+  // }
+
+  function getRotationAxis(x,y,z){
+    return cubePosition[x+1][y+1][z+1][3];
+  }
+  function getRotationMatrix(x,y,z){
+    return cubePosition[x+1][y+1][z+1][4];
+  }
+  function setRotationMatrix(x,y,z,m){
+    cubePosition[x+1][y+1][z+1][4] = m;
+  }
   
 
   /**
    */
   function draw() {
-    let viewMatrix = camera.getMatrix();
+    viewMatrix = camera.getMatrix();
     
     // Se activa el frame buffer creado, para realizar el render en él
     gl.bindFramebuffer(gl.FRAMEBUFFER, myFrameBuffer);
@@ -153,22 +182,33 @@ window.addEventListener("load", async function(evt) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     let updatedViewMatrix = [];
-    for (let i=0; i<geometry.length; i++) {
-      let { x, y, z, viewMatrix: positionMatrix, rotationMatrix } = cubePosition[i];
-      let temp = multiply(viewMatrix, rotationMatrix);
-      updatedViewMatrix.push(multiply(temp, positionMatrix));
-      
-      
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        for (let k = -1; k <= 1; k++) {
+          var tmp = viewMatrix;
+          viewMatrix = multiply(viewMatrix, getRotationMatrix(i,j,k));
+          viewMatrix = multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][4]);
+
+          // let temp = viewMatrix;
+          // viewMatrix = 
+          // viewMatrix = cubePosition[i + 1][j + 1][k + 1][3];
+          // rotationMatrix = cubePosition[i + 1][j + 1][k + 1][4];
+          // temp = multiply(viewMatrix, rotationMatrix);
+          
+          //updatedViewMatrix.push(multiply(temp, viewMatrix));
+          updatedViewMatrix.push(viewMatrix);
+          viewMatrix = tmp;
+        }
+      }
     }
+      
+    
     
 
     // Se dibujan los objetos con el material de selección
     for (let i=0; i<geometry.length; i++) {
-      let { x, y, z, viewMatrix: positionMatrix, rotationMatrix } = cubePosition[i];
-
       // Al material plano de selección se le asocia cual es su color de la lista de colores, hay que recordar que cada objeto en el arreglo geometry tiene asociado un único color en el arreglo picking_colors
       picking_material.color = picking_colors[i];
-
       // Se utiliza la función drawMaterial para dibujar la geometría con el material de selección
       geometry[i].drawMaterial(gl, picking_material, projectionMatrix, updatedViewMatrix[i], light);
     }
@@ -187,8 +227,6 @@ window.addEventListener("load", async function(evt) {
 
     // Se dibujan los objetos de forma usual
     for (let i=0; i<geometry.length; i++) {
-      let { x, y, z, viewMatrix: positionMatrix, rotationMatrix } = cubePosition[i];
-
       // // Update rotation and translation for each cube in the grid
       // let updatedViewMatrix = multiply(viewMatrix, rotationMatrix);
       // updatedViewMatrix = multiply(updatedViewMatrix, positionMatrix);
@@ -234,15 +272,18 @@ window.addEventListener("load", async function(evt) {
     // Y la textura para acceder a su información
     gl.bindTexture(gl.TEXTURE_2D, color_texture);
     
-    // La función readPixels permite leer información de la textura activa y guardar esa información en el último parámetro
-    gl.readPixels(mouse_position.x, mouse_position.y, 1 ,1, gl.RGBA, gl.UNSIGNED_BYTE, pixelColor);
+    // La función readPixels permite leer información de la textura activa y guardar esa información
+    //  en el último parámetro
+    gl.readPixels(mouse_position.x, mouse_position.y, 1,1, gl.RGBA, gl.UNSIGNED_BYTE, pixelColor);
 
+    console.log(pixelColor[0]);
+    // console.log(pixelColor[0] % 9);
     // Se libera la textura
     gl.bindTexture(gl.TEXTURE_2D, null);
     // Se libera el frame buffer
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    // console.log(pixelColor);
+
 
     // Si ya existe un elemento seleccionado se le quita el atributo del borde
     if (last_picked >= 0) {
@@ -251,16 +292,102 @@ window.addEventListener("load", async function(evt) {
 
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if ( pixelColor[3] !== 0 ) {
+      // console.log("cubo");
+      let layer = Math.floor(pixelColor[0]/9);
+      console.log(layer);
+      if (layer == 0 ){
+        turnFace("L");
+      }else if(layer == 1){
+        turnFace("U");
+      }else {
+        turnFace("F");
+      }
+
+      
       last_picked = pixelColor[0];
       geometry[last_picked].border = true;
     }
     // Se dio click en el fondo
     else {
+      // console.log("fondo");
       last_picked = -1;
     }
 
     // Una vez determinado si se selecciono o no un objeto se redibuja la escena
     draw();
   });
+
+  // function unproject(mousePos, projectionMatrix, viewMatrix, canvas) {
+  //   // Create a 4D vector for the mouse position in normalized device coordinates
+  //   let ndc = vec4(mousePos.x, mousePos.y, -1.0, 1.0);
+  
+  //   // Invert the projection and view matrices to transform from clip space to world space
+  //   let invertedProjection = inverse(projectionMatrix);
+  //   let invertedView = inverse(viewMatrix);
+  
+  //   // Transform the mouse position to world space
+  //   let rayWorldSpace = multiply(invertedProjection, ndc);
+  //   rayWorldSpace = multiply(invertedView, rayWorldSpace);
+  
+  //   return rayWorldSpace;
+  // }
+
+  // function rayIntersectsCube(ray, cube) {
+  //   const faces = [
+  //     { normal: [1, 0, 0], d: cube.x + cube.size / 2 },   // Right face
+  //     { normal: [-1, 0, 0], d: cube.x - cube.size / 2 },  // Left face
+  //     { normal: [0, 1, 0], d: cube.y + cube.size / 2 },   // Top face
+  //     { normal: [0, -1, 0], d: cube.y - cube.size / 2 },  // Bottom face
+  //     { normal: [0, 0, 1], d: cube.z + cube.size / 2 },   // Front face
+  //     { normal: [0, 0, -1], d: cube.z - cube.size / 2 },  // Back face
+  //   ];
+  
+  //   for (let i = 0; i < faces.length; i++) {
+  //     const face = faces[i];
+  //     const t = (face.d - ray.origin.dot(face.normal)) / ray.direction.dot(face.normal);
+  
+  //     // If the ray is parallel to the face, there will be no intersection
+  //     if (t <= 0) continue;
+  
+  //     // Calculate the intersection point
+  //     const intersection = ray.origin.add(ray.direction.multiply(t));
+  
+  //     // Check if the intersection point is within the bounds of the face
+  //     if (isInsideFace(intersection, cube, i)) {
+  //       return { faceIndex: i, intersection }; // Return the intersected face and intersection point
+  //     }
+  //   }
+  
+  //   return null; // No intersection
+  // }
+  
+  // function isInsideFace(point, cube, faceIndex) {
+  //   // Based on the face, check if the intersection point is inside the bounds of the face
+  //   // You'll need to test the point against the bounds of each face (e.g., if on the right face, check x-bound, etc.)
+  // }
+  // function getMousePositionInNDC(mouseEvent, canvas) {
+  //   const x = (mouseEvent.clientX / canvas.width) * 2 - 1; // Map to NDC [-1, 1]
+  //   const y = -((mouseEvent.clientY / canvas.height) * 2 - 1); // Y is inverted in NDC
+  //   return { x, y };
+  // }
+  // gl.canvas.addEventListener("mousedown", (evt) => {
+  //   let mousePos = getMousePositionInNDC(evt, gl.canvas);
+    
+  //   // Assume camera's projection and view matrices are available
+  //   let ray = unproject(mousePos, projectionMatrix, viewMatrix, gl.canvas);
+    
+  //   // Now, find the cube that's clicked (already known from your code)
+  //   let cube = geometry[last_picked]; // Assuming you already know the clicked cube
+    
+  //   // Find which face of the cube is clicked
+  //   let intersection = rayIntersectsCube(ray, cube);
+    
+  //   if (intersection) {
+  //     console.log("Clicked face:", intersection.faceIndex);
+  //     console.log("Intersection point:", intersection.intersection);
+  //   } else {
+  //     console.log("No face clicked.");
+  //   }
+  // });
 
 });
