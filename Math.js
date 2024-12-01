@@ -1,3 +1,13 @@
+function negate( u )
+{
+    var result = [];
+    for ( var i = 0; i < u.length; ++i ) {
+        result.push( -u[i] );
+    }
+
+    return result;
+}
+
 /**
  * Creates an array of arguments
  * @param {number} args 
@@ -120,14 +130,14 @@ function scale(sx, sy, sz) {
 function rotate(rad, axis) {
   switch (axis) {
     case 0:
-      rotateX(rad);
-      break;
+      return rotateX(rad);
+
     case 1:
-      rotateY(rad);
-      break;
+      return rotateY(rad);
+
     case 2:
-      rotateZ(rad);
-      break;
+      return rotateZ(rad);
+
     default:
       console.log("Wrong axis");
   }

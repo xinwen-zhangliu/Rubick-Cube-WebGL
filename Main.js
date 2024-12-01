@@ -1,4 +1,35 @@
 // Es importante el async
+
+/**
+ * Provides requestAnimationFrame in a cross browser way.
+ */
+window.requestAnimFrame = (function() {
+  return window.requestAnimationFrame ||
+         window.webkitRequestAnimationFrame ||
+         window.mozRequestAnimationFrame ||
+         window.oRequestAnimationFrame ||
+         window.msRequestAnimationFrame ||
+         function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
+           window.setTimeout(callback, 1000/60);
+         };
+})();
+
+var cubePosition = [
+  [[[],[],[]],[[],[],[]],[[],[],[]]],
+  [[[],[],[]],[[],[],[]],[[],[],[]]],
+  [[[],[],[]],[[],[],[]],[[],[],[]]]
+];
+
+function getRotationAxis(x,y,z){
+  return cubePosition[x+1][y+1][z+1][3];
+}
+function getRotationMatrix(x,y,z){
+  return cubePosition[x+1][y+1][z+1][4];
+}
+function setRotationMatrix(x,y,z,m){
+  cubePosition[x+1][y+1][z+1][4] = m;
+}
+
 window.addEventListener("load", async function(evt) {
   const gl = document.getElementById("the_canvas").getContext("webgl2");
   // set variable canvas height, as window height 
@@ -6,8 +37,6 @@ window.addEventListener("load", async function(evt) {
   gl.canvas.height = window.innerHeight;
   if (!gl) throw "WebGL no soportado";
 
-  
-  
   
   let viewMatrix;
 
@@ -114,11 +143,7 @@ window.addEventListener("load", async function(evt) {
   );
   // There are 27 little cubes in a 3x3x3 Rubik's cube, we set the positions of each cube 
   // var cubePosition = [];
-  var cubePosition = [
-    [[[],[],[]],[[],[],[]],[[],[],[]]],
-    [[[],[],[]],[[],[],[]],[[],[],[]]],
-    [[[],[],[]],[[],[],[]],[[],[],[]]]
-  ];
+  
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       for (let k = -1; k <= 1; k++) {
@@ -140,23 +165,12 @@ window.addEventListener("load", async function(evt) {
     }
   }
 
-
-
-
-  function getRotationAxis(x,y,z){
-    return cubePosition[x+1][y+1][z+1][3];
-  }
-  function getRotationMatrix(x,y,z){
-    return cubePosition[x+1][y+1][z+1][4];
-  }
-  function setRotationMatrix(x,y,z,m){
-    cubePosition[x+1][y+1][z+1][4] = m;
-  }
-  
-
   /**
    */
   function draw() {
+
+    
+    
     viewMatrix = camera.getMatrix();
     
     // Se activa el frame buffer creado, para realizar el render en él
@@ -217,12 +231,12 @@ window.addEventListener("load", async function(evt) {
     }
 
   }
-
+  window.draw = draw;
   draw();
 
   // la cámara registra su manejador de eventos
   camera.registerMouseEvents(gl.canvas, draw);
-
+  requestAnimFrame(draw);
   //////////////////////////////////////////////////
   // Se agrega el control para convertir la posición del mouse a una posición en pantalla y obtener el color de la textura asociada al frame buffer no visible
 
@@ -231,8 +245,26 @@ window.addEventListener("load", async function(evt) {
   // El indice del objeto seleccionado
   let last_picked = -1;
 
+
+  // variables for face dragging
+  let isDragging = false;
+  let startX, startY, endX, endY;
+  let selectedFace = null;
+
   // El manejador de eventos para detectar donde se pulso el botón del ratón
   gl.canvas.addEventListener("mousedown", (evt) => {
+    ///---------------
+    const mousePos = getMousePositionInElement(evt, gl.canvas);
+
+    // The beginning positions of the dragging
+    isDragging = true;
+    startX = mousePos.x;
+    startY = mousePos.y;
+
+    // ---------------
+
+
+
     // Se obtiene la posición del ratón dentro del canvas
     mouse_position = getMousePositionInElement(evt, gl.canvas);
 
@@ -251,7 +283,7 @@ window.addEventListener("load", async function(evt) {
     //  en el último parámetro
     gl.readPixels(mouse_position.x, mouse_position.y, 1,1, gl.RGBA, gl.UNSIGNED_BYTE, pixelColor);
 
-    console.log(pixelColor[0]);
+    // console.log(pixelColor[0]);
     // console.log(pixelColor[0] % 9);
     // Se libera la textura
     gl.bindTexture(gl.TEXTURE_2D, null);
@@ -268,8 +300,13 @@ window.addEventListener("load", async function(evt) {
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if ( pixelColor[3] !== 0 ) {
       // console.log("cubo");
-      let layer = Math.floor(pixelColor[0]/9);
-      console.log(layer);
+      // let layer = Math.floor(pixelColor[0]/9);
+      // // console.log(layer);
+       animationQueue.push("L");
+      // if (animationQueue.length != 0 && !isAnimating){
+      //   animate(animationQueue.shift());
+      //   isAnimating = true;
+      // }
       // if (layer == 0 ){
       //   turnFace("L");
       // }else if(layer == 1){
@@ -279,6 +316,7 @@ window.addEventListener("load", async function(evt) {
       // }
 
       
+      
       last_picked = pixelColor[0];
       geometry[last_picked].border = true;
     }
@@ -286,12 +324,67 @@ window.addEventListener("load", async function(evt) {
     else {
       // console.log("fondo");
       last_picked = -1;
+      selectedFace = null;
     }
 
     // Una vez determinado si se selecciono o no un objeto se redibuja la escena
     draw();
   });
 
+
+  gl.canvas.addEventListener("mousemove", (evt) => {
+    if (!isDragging) return;
+  
+    const mousePos = getMousePositionInElement(evt, gl.canvas);
+    console.log(mousePos);
+    endX = mousePos.x;
+    endY = mousePos.y;
+  });
+
+
+  gl.canvas.addEventListener("mouseup", (evt) => {
+    if (!isDragging) return;
+  
+    isDragging = false;
+  
+    // Calculate drag direction
+    const dragVector = { x: endX - startX, y: endY - startY };
+  
+    // Determine the rotation based on the drag
+    determineRotation(dragVector);
+  });
+
+  function normalizeVector(v) {
+    const length = Math.sqrt(v.x * v.x + v.y * v.y);
+    return { x: v.x / length, y: v.y / length };
+  }
+  
+
+  function determineRotation(dragVector) {
+    const normalized = normalizeVector(dragVector);
+  
+    // Map direction based on the selected face
+    if (selectedFace === "L") {
+      if (Math.abs(normalized.y) > Math.abs(normalized.x)) {
+        animationQueue.push(normalized.y > 0 ? "U" : "D");
+      } else {
+        animationQueue.push(normalized.x > 0 ? "R" : "L");
+      }
+    } else if (selectedFace === "F") {
+      if (Math.abs(normalized.y) > Math.abs(normalized.x)) {
+        animationQueue.push(normalized.y > 0 ? "U" : "D");
+      } else {
+        animationQueue.push(normalized.x > 0 ? "R" : "L");
+      }
+    }
+    // Handle other faces similarly...
+  
+    if (animationQueue.length != 0 && !isAnimating) {
+      animate(animationQueue.shift());
+      isAnimating = true;
+    }
+  }
+  
   // function unproject(mousePos, projectionMatrix, viewMatrix, canvas) {
   //   // Create a 4D vector for the mouse position in normalized device coordinates
   //   let ndc = vec4(mousePos.x, mousePos.y, -1.0, 1.0);

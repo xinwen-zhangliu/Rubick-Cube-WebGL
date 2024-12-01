@@ -1,3 +1,5 @@
+
+
 class GenericGeometry {
   constructor(gl, material, transform) {
     this.material = material;

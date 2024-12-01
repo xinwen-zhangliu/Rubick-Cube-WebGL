@@ -32,6 +32,28 @@
 //     "m", "e", "s",
 // ];
 
+var rotationAngle = 10;  // MUST be a factor of 90
+var animationTimer = 15; // delay in milliseconds
+var currentAngle = 0;
+var interval;
+var isAnimating = false;
+var animationQueue = [];
+
+function animate(action) {
+  if (isAnimating) {
+    animationQueue.push(action);
+    return;
+  }
+
+  isAnimating = true;
+  interval = setInterval(function () {
+    rotation(action);
+    if (!isAnimating && animationQueue.length > 0) {
+      animate(animationQueue.shift());
+    }
+  }, animationTimer);
+}
+
 var moves = [
   "L", "M", "R",
   "U", "E", "D",
@@ -46,112 +68,153 @@ function getMousePositionInElement(evt, element) {
   };
 }
 
+
+function applyPartialRotation(face, angle, mainAxis) {
+  let value;
+  switch (mainAxis) {
+    case 0: value = (face === "L" ? -1 : face === "R" ? 1 : 0); break;
+    case 1: value = (face === "U" ? -1 : face === "D" ? 1 : 0); break;
+    case 2: value = (face === "F" ? -1 : face === "B" ? 1 : 0); break;
+  }
+
+  for (let x = -1; x < 2; x++) {
+    for (let y = -1; y < 2; y++) {
+      for (let z = -1; z < 2; z++) {
+        if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
+          const m = getRotationMatrix(x, y, z);
+          const rotationMatrix = rotate(radians(angle), mainAxis);
+          setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
+        }
+      }
+    }
+  }
+  window.draw();
+}
 function rotation(face) {
-  turnFace(face);
+  // Determine the main axis and layer value based on the face
+  let mainAxis, value;
+  switch (face.toUpperCase()) {
+    case "L": case "M": case "R": mainAxis = 0; value = (face === "L" ? -1 : face === "R" ? 1 : 0); break;
+    case "U": case "E": case "D": mainAxis = 1; value = (face === "U" ? -1 : face === "D" ? 1 : 0); break;
+    case "F": case "S": case "B": mainAxis = 2; value = (face === "F" ? -1 : face === "B" ? 1 : 0); break;
+  }
+
+  // Incrementally rotate the layer
   currentAngle += rotationAngle;
-  if (currentAngle == 90) {
-    // Reset parameters
-    clearInterval(interval);
+  applyPartialRotation(face, currentAngle, mainAxis);
+
+  if (currentAngle >= 90) {
+    clearInterval(interval); // Stop animation
+    currentAngle = 0; // Reset for the next rotation
     isAnimating = false;
-    currentAngle = 0;
-    updatePosition(face);
+    updatePosition(face); // Update logical state
+    draw(); // Redraw final state
   }
 }
 
-function turnCube(cube){
-  let plane = Math.floor(cube/9);
-  for (let i = 0; i < cubePosition.length; i++){
-    if (cubePosition[i]){
-    }
-  }
-  switch (axis) {
-    case 0:
-      rotateX(rad);
+
+function updatePosition(face){
+  var i, j, k, val;
+  switch (face){
+    case "L":
+      i = 0; j = 2; k = 1; val = -1;
       break;
-    case 1:
-      rotateY(rad);
+    case "l":
+      i = 0; j = 1; k = 2; val = -1;
       break;
-    case 2:
-      rotateZ(rad);
+    case "R":
+      i = 0; j = 1; k = 2; val = 1;
       break;
-    default:
-      console.log("Wrong axis");
+    case "r":
+      i = 0; j = 2; k = 1; val = 1;
+    break;
+    case "T":
+      i = 1; j = 2; k = 0; val = 1;
+    break;
+    case "t":
+      i = 1; j = 0; k = 2; val = 1;
+    break;
+    case "B":
+      i = 1; j = 0; k = 2; val = -1;
+    break;
+    case "b":
+      i = 1; j = 2; k = 0; val = -1;
+    break;
+    case "E":
+      i = 1; j = 0; k = 2; val = 0;
+    break;
+    case "e":
+      i = 1; j = 2; k = 0; val = 0;
+    break;
+    case "F":
+      i = 2; j = 0; k = 1; val = 1;
+    break;
+    case "f":
+      i = 2; j = 1; k = 0; val = 1;
+    break;
+    case "S":
+      i = 2; j = 0; k = 1; val = 0;
+    break;
+    case "s":
+      i = 2; j = 1; k = 0; val = 0;
+    break;
+    case "K":
+      i = 2; j = 1; k = 0; val = -1;
+    break;
+    case "k":
+      i = 2; j = 0; k = 1; val = -1;
+    break;
+    case "M":
+      i = 0; j = 2; k = 1; val = 0;
+    break;
+    case "m":
+      i = 0; j = 1; k = 2; val = 0;
+    break;
   }
-
-}
-
-
-function turnFace(move ) {
-  var x, y, z;
-  var dir, value;
-  var mainAxis;
-  var m;
-  
-  
-  
-  if (move = move.toLowerCase()) {
-    dir = 0;
-  } else {
-    dir = 1;
-  }
-
-  if (move.toUpperCase() == "L" || move.toUpperCase() == "M" || move.toUpperCase() == "R") {
-    mainAxis = 0;
-    switch (move.toUpperCase()) {
-      case "L":
-        value = -1;
-        break;
-      case "M":
-        value = 0;
-        break;
-      case "R":
-        value = 1;
-        break;
-    }
-  } else if (move.toUpperCase() == "U" || move.toUpperCase() == "E" || move.toUpperCase() == "D") {
-    mainAxis = 1;
-    switch (move.toUpperCase()) {
-      case "U":
-        value = -1;
-        break;
-      case "E":
-        value = 0;
-        break;
-      case "D":
-        value = 1;
-        break;
-    }
-  } else {
-    mainAxis = 2;
-    switch (move.toUpperCase()) {
-      case "F":
-        value = -1;
-        break;
-      case "S":
-        value = 0;
-        break;
-      case "B":
-        value = 1;
-        break;
-    }
-  }
-
-
   for (x = -1; x < 2; x++) {
     for (y = -1; y < 2; y++) {
       for (z = -1; z < 2; z++) {
-        
-        // check if cubie is in the plane of the face being turned
-        if (cubePosition[x + 1][y + 1][z + 1][mainAxis] == value) {
-          m = getRotationMatrix(x, y, z);
-          if (!dir) {
-            m = multiply(m, rotate(rotationAngle,
-              getRotationAxis(x, y, z)[mainAxis]));
-          } else {
-            m = multiply(m, rotate(rotationAngle,
-              negate(getRotationAxis(x, y, z)[mainAxis])));
-          }
-          setRotationMatrix(x, y, z, m);
+        swap(x, y, z, i, j, k, val);
+      }
+    }
+  }
+}
+
+function swap(x, y, z, i, j, k, val){
+  var tmp = [];
+  if (cubePosition[x+1][y+1][z+1][i] == val) {
+    tmp = cubePosition[x+1][y+1][z+1][j];
+    cubePosition[x+1][y+1][z+1][j] = cubePosition[x+1][y+1][z+1][k];
+    cubePosition[x+1][y+1][z+1][k] = -tmp;
+    tmp = cubePosition[x+1][y+1][z+1][3][k];
+    cubePosition[x+1][y+1][z+1][3][k] = negate(cubePosition[x+1][y+1][z+1][3][j]);
+    cubePosition[x+1][y+1][z+1][3][j] = tmp;
+  }
+}
+
+
+function turnFace(move) {
+  const isClockwise = move === move.toUpperCase();
+  const axisMap = { X: 0, Y: 1, Z: 2 };
+
+  let axis, layerValue;
+
+  switch (move.toUpperCase()) {
+    case "L": case "M": case "R": axis = 0; layerValue = (move === "L" ? -1 : move === "R" ? 1 : 0); break;
+    case "U": case "E": case "D": axis = 1; layerValue = (move === "U" ? -1 : move === "D" ? 1 : 0); break;
+    case "F": case "S": case "B": axis = 2; layerValue = (move === "F" ? -1 : move === "B" ? 1 : 0); break;
+  }
+
+  applyRotation(axis, layerValue, isClockwise ? rotationAngle : -rotationAngle);
+}
+
+function applyRotation(axis, layerValue, angle) {
+  for (let x = -1; x < 2; x++) {
+    for (let y = -1; y < 2; y++) {
+      for (let z = -1; z < 2; z++) {
+        if (cubePosition[x + 1][y + 1][z + 1][axis] === layerValue) {
+          const m = getRotationMatrix(x, y, z);
+          setRotationMatrix(x, y, z, multiply(m, rotate(radians(angle), axis)));
         }
       }
     }
