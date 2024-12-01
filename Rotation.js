@@ -69,27 +69,6 @@ function getMousePositionInElement(evt, element) {
 }
 
 
-function applyPartialRotation(face, angle, mainAxis) {
-  let value;
-  switch (mainAxis) {
-    case 0: value = (face === "L" ? -1 : face === "R" ? 1 : 0); break;
-    case 1: value = (face === "U" ? -1 : face === "D" ? 1 : 0); break;
-    case 2: value = (face === "F" ? -1 : face === "B" ? 1 : 0); break;
-  }
-
-  for (let x = -1; x < 2; x++) {
-    for (let y = -1; y < 2; y++) {
-      for (let z = -1; z < 2; z++) {
-        if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
-          const m = getRotationMatrix(x, y, z);
-          const rotationMatrix = rotate(radians(angle), mainAxis);
-          setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
-        }
-      }
-    }
-  }
-  window.draw();
-}
 function rotation(face) {
   // Determine the main axis and layer value based on the face
   let mainAxis, value;
@@ -101,14 +80,34 @@ function rotation(face) {
 
   // Incrementally rotate the layer
   currentAngle += rotationAngle;
-  applyPartialRotation(face, currentAngle, mainAxis);
+  //applyPartialRotation(face, currentAngle, mainAxis);
+  
+  //let value;
+  switch (mainAxis) {
+    case 0: value = (face === "L" ? -1 : face === "R" ? 1 : 0); break;
+    case 1: value = (face === "U" ? -1 : face === "D" ? 1 : 0); break;
+    case 2: value = (face === "F" ? -1 : face === "B" ? 1 : 0); break;
+  }
+
+  for (let x = -1; x < 2; x++) {
+    for (let y = -1; y < 2; y++) {
+      for (let z = -1; z < 2; z++) {
+        if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
+          const m = getRotationMatrix(x, y, z);
+          const rotationMatrix = rotate(radians(currentAngle), mainAxis);
+          setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
+        }
+      }
+    }
+  }
+  window.draw();
 
   if (currentAngle >= 90) {
     clearInterval(interval); // Stop animation
     currentAngle = 0; // Reset for the next rotation
     isAnimating = false;
     updatePosition(face); // Update logical state
-    draw(); // Redraw final state
+    //draw(); // Redraw final state
   }
 }
 
@@ -193,30 +192,3 @@ function swap(x, y, z, i, j, k, val){
 }
 
 
-function turnFace(move) {
-  const isClockwise = move === move.toUpperCase();
-  const axisMap = { X: 0, Y: 1, Z: 2 };
-
-  let axis, layerValue;
-
-  switch (move.toUpperCase()) {
-    case "L": case "M": case "R": axis = 0; layerValue = (move === "L" ? -1 : move === "R" ? 1 : 0); break;
-    case "U": case "E": case "D": axis = 1; layerValue = (move === "U" ? -1 : move === "D" ? 1 : 0); break;
-    case "F": case "S": case "B": axis = 2; layerValue = (move === "F" ? -1 : move === "B" ? 1 : 0); break;
-  }
-
-  applyRotation(axis, layerValue, isClockwise ? rotationAngle : -rotationAngle);
-}
-
-function applyRotation(axis, layerValue, angle) {
-  for (let x = -1; x < 2; x++) {
-    for (let y = -1; y < 2; y++) {
-      for (let z = -1; z < 2; z++) {
-        if (cubePosition[x + 1][y + 1][z + 1][axis] === layerValue) {
-          const m = getRotationMatrix(x, y, z);
-          setRotationMatrix(x, y, z, multiply(m, rotate(radians(angle), axis)));
-        }
-      }
-    }
-  }
-}
