@@ -57,7 +57,11 @@ function _argumentsToArray( args )
     return [].concat.apply( [], Array.prototype.slice.apply(args) );
 }
 
-
+/**
+ * Turn every value negative
+ * @param {Array} u  values
+ * @returns the resulting array
+ */
 function negate(u) {
   var result = [];
   for (var i = 0; i < u.length; ++i) {
@@ -156,7 +160,12 @@ function scale(sx, sy, sz) {
 }
 
 
-
+/**
+ * Wrapper function for each rotate
+ * @param {number} rad  radians of turn
+ * @param {numebr} axis  the vactor to rotate
+ * @returns 
+ */
 function rotate(rad, axis) {
   switch (axis) {
     case 0:
