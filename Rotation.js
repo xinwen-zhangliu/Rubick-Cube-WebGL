@@ -76,7 +76,12 @@ function getMousePositionInElement(evt, element) {
 function rotation(cube, mainAxis, direction) {
 
   currentAngle += rotationAngle;
-  let value = Math.round(cube.transform[(mainAxis * 4) + 3]);
+  //let value = Math.round(cube.transform[(mainAxis * 4) + 3]);
+
+  let value = 0;
+  
+
+
   for (let x = -1; x < 2; x++) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
@@ -99,21 +104,16 @@ function rotation(cube, mainAxis, direction) {
       "D", "E", "U",
       "R", "M", "L",
     ];
-
+    //initGeo();
     window.draw();
 
     if (currentAngle >= 90) {
       clearInterval(interval); // Stop animation
       currentAngle = 0; // Reset for the next rotation
       isAnimating = false;
-      //rotateIndices(mainAxis, direction, cube);
-      // let move = direction ? moves[(mainAxis * 3) + Math.round(cube.transform[(mainAxis * 4) + 3]) + 1]
-      //   : moves[(mainAxis * 3) + Math.round(cube.transform[(mainAxis * 4) + 3]) + 1].toLowerCase();
-      // console.log("axis", mainAxis);
-      // console.log("layer", Math.round(cube.transform[(mainAxis * 4) + 3]) + 1);
-      // console.log(move);
-      //updatePosition(move);
-      update(mainAxis, direction, value);
+      //update(mainAxis, direction, value);
+      //initGeo();
+      
     }
 
   }
@@ -128,9 +128,13 @@ function update(mainAxis, direction, value) {
           console.log(cubePosition[x + 1][y + 1][z + 1][3]);
           let tx, ty, tz, ogx, ogy, newcoor;
 
-          let i = cubePosition[x + 1][y + 1][z + 1][0];
-          let j = cubePosition[x + 1][y + 1][z + 1][1];
-          let k = cubePosition[x + 1][y + 1][z + 1][2];
+          // let i = cubePosition[x + 1][y + 1][z + 1][0];
+          // let j = cubePosition[x + 1][y + 1][z + 1][1];
+          // let k = cubePosition[x + 1][y + 1][z + 1][2];
+
+          let i = cubePosition[x + 1][y + 1][z + 1][3][3];
+          let j = cubePosition[x + 1][y + 1][z + 1][3][7];
+          let k = cubePosition[x + 1][y + 1][z + 1][3][11];
 
           newcoor  = multiplyMatrixByVector(createRotationMatrix(mainAxis, direction), [i,j,k]);
           console.log(i,j,k);
@@ -144,11 +148,11 @@ function update(mainAxis, direction, value) {
           cubePosition[x + 1][y + 1][z + 1][2]  = newcoor[2];
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
           r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
-          // console.log(r);
-          cubePosition[x + 1][y + 1][z + 1][3] = 
-          [r[0], r[1], r[2], tx,
-          r[3], r[4], r[5], ty,
-          r[6], r[7], r[8], tz,
+          console.log(newcoor[0], newcoor[1], newcoor[2]);
+          cubePosition[x + 1][y + 1][z + 1][3] = //translate(newcoor[0],newcoor[1],newcoor[2]);
+          [r[0], r[1], r[2], newcoor[0],
+          r[3], r[4], r[5],  newcoor[1],
+          r[6], r[7], r[8],  newcoor[2],
           0,0,0,1];
           console.log(cubePosition[x + 1][y + 1][z + 1][3]);
         }

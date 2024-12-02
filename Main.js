@@ -186,31 +186,31 @@ window.addEventListener("load", async function (evt) {
     }
   }
 
-  // function initGeo() {
-  //   geometry = [];
-  //   for (let i = -1; i <= 1; i++) {
-  //     for (let j = -1; j <= 1; j++) {
-  //       for (let k = -1; k <= 1; k++) {
-  //         let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
-  //         cubePosition[i + 1][j + 1][k + 1][0] = i;
-  //         cubePosition[i + 1][j + 1][k + 1][1] = j;
-  //         cubePosition[i + 1][j + 1][k + 1][2] = k;
-  //         cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
-  //         //cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  function initGeo() {
+    geometry = [];
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        for (let k = -1; k <= 1; k++) {
+          // let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
+          // cubePosition[i + 1][j + 1][k + 1][0] = i;
+          // cubePosition[i + 1][j + 1][k + 1][1] = j;
+          // cubePosition[i + 1][j + 1][k + 1][2] = k;
+          // cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
+          // cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
 
-  //         geometry.push(new Cubo(
-  //           gl,
-  //           //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
-  //           new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-  //           viewMatrix
-  //         ));
-  //       }
-  //     }
-  //   }
-  // }
+          geometry.push(new Cubo(
+            gl,
+            //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
+            new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
+            cubePosition[i + 1][j + 1][k + 1][3]
+          ));
+        }
+      }
+    }
+  }
 
-  // window.initGeo = initGeo;
+  window.initGeo = initGeo;
 
   /**
    * Draws the scene
@@ -393,7 +393,7 @@ window.addEventListener("load", async function (evt) {
     if (pixelColor[3] !== 0 && isAnimating == false) {
       console.log(last_picked);
       animationQueue.push({ cube: geometry[last_picked], mainAxis, direction});
-      
+      animationQueue.push({ cube: geometry[last_picked], mainAxis:2, direction});
     }
     if (animationQueue.length != 0 && !isAnimating) {
       animate(animationQueue.shift());
