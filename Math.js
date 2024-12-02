@@ -1,11 +1,70 @@
-function negate( u )
-{
-    var result = [];
-    for ( var i = 0; i < u.length; ++i ) {
-        result.push( -u[i] );
-    }
 
-    return result;
+
+// function getFacingFace(cameraPos, coi, cubeRotationMatrix) {
+//   // Calculate camera view direction (w)
+//   let w = normalize(subtract(cameraPos, coi));
+
+//   // Original face normals (cube centered at origin)
+//   const originalNormals = {
+//     front: [0, 0, 1],
+//     back: [0, 0, -1],
+//     left: [-1, 0, 0],
+//     right: [1, 0, 0],
+//     top: [0, 1, 0],
+//     bottom: [0, -1, 0]
+//   };
+
+//   // Transform normals using the cube's rotation matrix
+//   const transformedNormals = {};
+
+//   for (let face in originalNormals) {
+//     transformedNormals[face] = transformVector(originalNormals[face], cubeRotationMatrix);
+//   }
+
+//   // Function to calculate the dot product
+//   function dotProduct(a, b) {
+//     return ((a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]));
+//   }
+
+//   // Find the face with the maximum dot product (i.e., the one closest to the camera)
+//   let bestFace = null;
+//   let maxDot = -Infinity;
+//   for (let face in transformedNormals) {
+//     //console.log([w.x, w.y, w.z], transformedNormals[face]);
+//     let dot = dotProduct([w.x, w.y, w.z], transformedNormals[face]);
+//     console.log(dot);
+//     if (dot > maxDot) {
+//       maxDot = dot;
+//       bestFace = face;
+//     }
+//   }
+
+//   return bestFace;
+// }
+
+// function transformVector(vec, mat) {
+//   return [
+//       vec[0] * mat[0] + vec[1] * mat[4] + vec[2] * mat[8] + mat[12],
+//       vec[0] * mat[1] + vec[1] * mat[5] + vec[2] * mat[9] + mat[13],
+//       vec[0] * mat[2] + vec[1] * mat[6] + vec[2] * mat[10] + mat[14]
+//   ];
+// }
+
+
+
+function _argumentsToArray( args )
+{
+    return [].concat.apply( [], Array.prototype.slice.apply(args) );
+}
+
+
+function negate(u) {
+  var result = [];
+  for (var i = 0; i < u.length; ++i) {
+    result.push(-u[i]);
+  }
+
+  return result;
 }
 
 /**
@@ -17,38 +76,7 @@ function _argumentsToArray(args) {
   return [].concat.apply([], Array.prototype.slice.apply(args));
 }
 
-// /**
-//  * Constructor for a 4x4 matrix
-//  * @returns Matrix of 4x4 
-//  */
-// function mat4(){
-//     var v = _argumentsToArray( arguments );
 
-//     var m = [];
-//     switch ( v.length ) {
-//     case 0:
-//         v[0] = 1;
-//     case 1:
-//         m = [
-//             vec4( v[0], 0.0,  0.0,   0.0 ),
-//             vec4( 0.0,  v[0], 0.0,   0.0 ),
-//             vec4( 0.0,  0.0,  v[0],  0.0 ),
-//             vec4( 0.0,  0.0,  0.0,  v[0] )
-//         ];
-//         break;
-
-//     default:
-//         m.push( vec4(v) );  v.splice( 0, 4 );
-//         m.push( vec4(v) );  v.splice( 0, 4 );
-//         m.push( vec4(v) );  v.splice( 0, 4 );
-//         m.push( vec4(v) );
-//         break;
-//     }
-
-//     m.matrix = true;
-
-//     return m;
-// }
 
 /**
  * Constructor for a vector of len 4
@@ -126,6 +154,8 @@ function scale(sx, sy, sz) {
     0, 0, 0, 1
   ];
 }
+
+
 
 function rotate(rad, axis) {
   switch (axis) {

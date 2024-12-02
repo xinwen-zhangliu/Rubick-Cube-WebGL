@@ -20,18 +20,22 @@ var cubePosition = [
   [[[], [], []], [[], [], []], [[], [], []]]
 ];
 
+var geometry = [];
+
 function getRotationAxis(x, y, z) {
-  console.log("get rotation AXIS");
-  console.log(cubePosition[x + 1][y + 1][z + 1][3]);
+  // console.log("get rotation AXIS");
+  // console.log(cubePosition[x + 1][y + 1][z + 1][3]);
   return cubePosition[x + 1][y + 1][z + 1][3];
 }
+
 function getRotationMatrix(x, y, z) {
   return cubePosition[x + 1][y + 1][z + 1][4];
 }
+
 function setRotationMatrix(x, y, z, m) {
   cubePosition[x + 1][y + 1][z + 1][4] = m;
-  console.log("set rotation matrix");
-  console.log(m);
+  // console.log("set rotation matrix");
+  // console.log(m);
 }
 
 window.addEventListener("load", async function (evt) {
@@ -139,7 +143,7 @@ window.addEventListener("load", async function (evt) {
 
   // textura 
   let texCubo = await loadImage("texturas/prisma_rectangular.png");
-  let geometry = [];
+  //let geometry = []
 
 
   let camera = new OrbitCamera(
@@ -171,9 +175,37 @@ window.addEventListener("load", async function (evt) {
     }
   }
 
+  function initGeo() {
+    geometry = [];
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        for (let k = -1; k <= 1; k++) {
+          let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
+          cubePosition[i + 1][j + 1][k + 1][0] = i;
+          cubePosition[i + 1][j + 1][k + 1][1] = j;
+          cubePosition[i + 1][j + 1][k + 1][2] = k;
+          cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
+          //cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+
+
+          geometry.push(new Cubo(
+            gl,
+            //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
+            new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
+            viewMatrix
+          ));
+        }
+      }
+    }
+  }
+
+  window.initGeo = initGeo;
+
   /**
    */
   function draw() {
+
+
     viewMatrix = camera.getMatrix();
 
     // Se activa el frame buffer creado, para realizar el render en él
@@ -191,15 +223,6 @@ window.addEventListener("load", async function (evt) {
           viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k));
           viewMatrix = multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3]);
           updatedViewMatrix.push(viewMatrix);
-          // console.log([cubePosition[i + 1][j + 1][k + 1][0],
-          //   cubePosition[i + 1][j + 1][k + 1][1],
-          //   cubePosition[i + 1][j + 1][k + 1][2]]);
-          if (cubePosition[i + 1][j + 1][k + 1][0] == -1
-            && cubePosition[i + 1][j + 1][k + 1][1] == 1
-            && cubePosition[i + 1][j + 1][k + 1][2] == 1) {
-            console.log(viewMatrix);
-          }
-
 
           viewMatrix = tmp;
         }
@@ -245,7 +268,7 @@ window.addEventListener("load", async function (evt) {
 
   }
   window.draw = draw;
-  //draw();
+  draw();
 
   // la cámara registra su manejador de eventos
   camera.registerMouseEvents(gl.canvas, draw);
@@ -312,34 +335,17 @@ window.addEventListener("load", async function (evt) {
 
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if (pixelColor[3] !== 0) {
-      // console.log("cubo");
-      // let layer = Math.floor(pixelColor[0]/9);
-      // // console.log(layer);
-      animationQueue.push("L");
-      // if (animationQueue.length != 0 && !isAnimating){
-      //   animate(animationQueue.shift());
-      //   isAnimating = true;
-      // }
-      // if (layer == 0 ){
-      //   turnFace("L");
-      // }else if(layer == 1){
-      //   turnFace("U");
-      // }else {
-      //   turnFace("F");
-      // }
+
 
 
 
       last_picked = pixelColor[0];
       geometry[last_picked].border = true;
       console.log(geometry[last_picked]);
-      let positionMatrix = geometry[last_picked].transform;
-      x = positionMatrix[3];
-      y = positionMatrix[7];
-      z = positionMatrix[11];
-      console.log(getRotationAxis(1,1,1));
-      console.log([x, y, z]);
-      console.log(cubePosition[Math.round(x) + 1][Math.round(y) + 1][Math.round(z) + 1][3]);
+
+      // console.log(getRotationAxis(1,1,1));
+      // console.log([x, y, z]);
+      // console.log(cubePosition[Math.round(x) + 1][Math.round(y) + 1][Math.round(z) + 1][3]);
     }
     // Se dio click en el fondo
     else {
@@ -353,63 +359,71 @@ window.addEventListener("load", async function (evt) {
   });
 
 
-  gl.canvas.addEventListener("mousemove", (evt) => {
-    if (!isDragging) return;
+  // gl.canvas.addEventListener("mousemove", (evt) => {
+  //   if (!isDragging) return;
 
-    const mousePos = getMousePositionInElement(evt, gl.canvas);
-    console.log(mousePos);
-    endX = mousePos.x;
-    endY = mousePos.y;
-  });
-
-
-  gl.canvas.addEventListener("mouseup", (evt) => {
-    if (!isDragging) return;
-
-    isDragging = false;
-
-    // Calculate drag direction
-    const dragVector = { x: endX - startX, y: endY - startY };
-
-    // Determine the rotation based on the drag
-    determineRotation(dragVector);
-  });
-
-  function normalizeVector(v) {
-    const length = Math.sqrt(v.x * v.x + v.y * v.y);
-    return { x: v.x / length, y: v.y / length };
-  }
+  //   const mousePos = getMousePositionInElement(evt, gl.canvas);
+  //   // console.log(mousePos);
+  //   endX = mousePos.x;
+  //   endY = mousePos.y;
+  // });
 
 
-  function determineRotation(dragVector) {
-    const normalized = normalizeVector(dragVector);
+  // gl.canvas.addEventListener("mouseup", (evt) => {
+  //   if (!isDragging) return;
 
-    // Map direction based on the selected face
-    if (selectedFace === "L") {
-      if (Math.abs(normalized.y) > Math.abs(normalized.x)) {
-        animationQueue.push(normalized.y > 0 ? "U" : "D");
-      } else {
-        animationQueue.push(normalized.x > 0 ? "R" : "L");
-      }
-    } else if (selectedFace === "F") {
-      if (Math.abs(normalized.y) > Math.abs(normalized.x)) {
-        animationQueue.push(normalized.y > 0 ? "U" : "D");
-      } else {
-        animationQueue.push(normalized.x > 0 ? "R" : "L");
-      }
+  //   isDragging = false;
+
+  //   // Calculate drag direction
+  //   const dragVector = { x: endX - startX, y: endY - startY };
+
+  //   // Determine the rotation based on the drag
+
+
+  // });
+//   let keysPressed = {};
+//   document.addEventListener('keydown', (event) => {
+//     keysPressed[event.key] = true;
+ 
+//     if (keysPressed['ShiftLeft'] && event.key == 'a') {
+//         alert(event.key);
+//     }
+//  });
+ 
+//  document.addEventListener('keyup', (event) => {
+//     delete keysPressed[event.key];
+//  });
+
+  document.addEventListener("keydown", (evt) => {
+
+
+    let key = evt.key.toLowerCase();
+    let mainAxis, direction = 0;
+
+    /* Activar el movimiento según la tecla presionada. */
+    if (key === 'a')
+      mainAxis = 0;
+    else if (key === 's')
+      mainAxis = 1;
+    else if (key === 'd')
+      mainAxis = 2;
+    else if (key === 'ShiftLeft')
+      direction = 1;
+    else if (key === 'ShiftRight')
+      direction = 1;
+
+
+    if (pixelColor[3] !== 0 && isAnimating == false) {
+      console.log(last_picked);
+      animationQueue.push({ cube: geometry[last_picked], mainAxis, direction});
+      
     }
-    // Handle other faces similarly...
-
     if (animationQueue.length != 0 && !isAnimating) {
       animate(animationQueue.shift());
       isAnimating = true;
     }
-  }
-
+  });
 
 
 });
 
-
-// [1, Array(0),        0, -1.1, 0, 1, 0, 1.1, 0, 0, 1, -1.1, 0, 0, 0, 1]
-// [1, Array(0), Array(0), -1.1, 0, 1, 0, 1.1, 0, 0, 1, -1.1, 0, 0, 0, 1]
