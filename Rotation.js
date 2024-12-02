@@ -1,5 +1,5 @@
 /**
- * The available moves are (clockwise)
+ * Conventionally the available moves are (clockwise)
  * U : top layer
  * D : bottom layer 
  * R : rightmost layer
@@ -18,19 +18,13 @@
 /**
  * There are 3 axis 
  * 0 X
- *      L M R 
+ *      3 layers for each axis -1 0 1
  * 1 Y
- *      U E D
  * 2 Z
- *      F S B
- * 
+ *    
+ * and 2 direction clockwise = 0, counter-clockwise = 1
  */
-// var moves = [
-//     "U", "D", "R", "L", "F", "B",
-//     "u", "d", "r", "l", "f", "b",
-//     "M", "E", "S",
-//     "m", "e", "s",
-// ];
+
 
 // var moves = [
 //   "L", "M", "R",
@@ -38,13 +32,17 @@
 //   "F", "S", "B"
 // ];
 
-var rotationAngle = 10;  // MUST be a factor of 90
-var animationTimer = 15; // delay in milliseconds
+var rotationAngle = 10;  // factor of 90 so we can draw in between animations
+var animationTimer = 15; // delay for animation
 var currentAngle = 0;
 var interval;
 var isAnimating = false;
 var animationQueue = [];
 
+/**
+ * Creates the animation from the given move
+ * @param  action  {cube: ..., mainAxis: ..., direciton: ...}
+ */
 function animate(action) {
   if (isAnimating) {
     animationQueue.push(action);
@@ -61,7 +59,12 @@ function animate(action) {
 }
 
 
-
+/**
+ * returns the mouse position in canvas
+ * @param {Event} evt the event
+ * @param {*} element  the canvas
+ * @returns 
+ */
 function getMousePositionInElement(evt, element) {
   const rect = element.getBoundingClientRect();
   return {
@@ -71,9 +74,10 @@ function getMousePositionInElement(evt, element) {
 }
 
 /**
- * 
- * @param {*} cube 
+ * This performs the face rotations
+ * @param {Cubo} cube the cube selected
  * @param {number} mainAxis  x : 0, y : 1, z : 2
+ * @param {number} direction 0 : clockwise 1 : counter-clockwise
  */
 function rotation(cube, mainAxis, direction) {
 
