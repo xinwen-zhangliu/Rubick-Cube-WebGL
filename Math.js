@@ -57,19 +57,19 @@ function _argumentsToArray( args )
     return [].concat.apply( [], Array.prototype.slice.apply(args) );
 }
 
-/**
- * Turn every value negative
- * @param {Array} u  values
- * @returns the resulting array
- */
-function negate(u) {
-  var result = [];
-  for (var i = 0; i < u.length; ++i) {
-    result.push(-u[i]);
-  }
+// /**
+//  * Turn every value negative
+//  * @param {Array} u  values
+//  * @returns the resulting array
+//  */
+// function negate(u) {
+//   var result = [];
+//   for (var i = 0; i < u.length; ++i) {
+//     result.push(-u[i]);
+//   }
 
-  return result;
-}
+//   return result;
+// }
 
 /**
  * Creates an array of arguments
@@ -136,6 +136,40 @@ function identity() {
   ];
 }
 /**
+ * given a translation matrix y returns the 3x3 matrix
+ * @param {Array} m 4x4 matrix
+ * @returns top left corner 3x3 matrix
+ */
+function get3x3(m) {
+  return [
+    m[0], m[1], m[2],
+    m[4], m[5], m[6],
+    m[8], m[9], m[10],
+  ];
+
+}
+/**
+ * multiplies a 3x3 matrix with a size 3 vector
+ * @param {Array} matrix 3x3 mstrix
+ * @param {Array} vector size 3
+ * @returns the multiplication of matrix times vector
+ */
+function multiplyMatrixByVector(matrix, vector) {
+  if (matrix.length !== 9 || vector.length !== 3) {
+      throw new Error("Matrix must have 9 elements (3x3) and vector must have 3 elements.");
+  }
+
+  let result = [0, 0, 0]; // Initialize a result vector of size 3.
+
+  for (let i = 0; i < 3; i++) {
+      result[i] = matrix[i * 3] * vector[0] +
+                  matrix[i * 3 + 1] * vector[1] +
+                  matrix[i * 3 + 2] * vector[2];
+  }
+
+  return result;
+}
+/**
  * Transformación de traslación
  */
 function translate(tx, ty, tz) {
@@ -146,6 +180,25 @@ function translate(tx, ty, tz) {
     0, 0, 0, 1
   ];
 }
+
+// function translate3( x, y, z )
+// {
+//     if ( Array.isArray(x) && x.length == 3 ) {
+//         z = x[2];
+//         y = x[1];
+//         x = x[0];
+//     }
+
+    
+//     return [
+//       1, 0, 0, x,
+//       0, 1, 0, y,
+//       0, 0, 1, z,
+//       0, 0, 0, 1
+//     ];
+// }
+
+
 
 /**
  * Transformación de escalamiento
@@ -337,6 +390,36 @@ function multiplyVector(M, v) {
     w: M[12] * v.x + M[13] * v.y + M[14] * v.z + M[15] * v.w,
   };
 }
+
+/**
+ * Multiplies 2 3x3 matrices.
+ * @param {Array} a length 3
+ * @param {Array} b length 3
+ * @returns the multiplication of both
+ */
+function multiply3x3(a, b) {
+  let a00 = a[0], a01 = a[1], a02 = a[2];
+  let a10 = a[3], a11 = a[4], a12 = a[5];
+  let a20 = a[6], a21 = a[7], a22 = a[8];
+
+  let b00 = b[0], b01 = b[1], b02 = b[2];
+  let b10 = b[3], b11 = b[4], b12 = b[5];
+  let b20 = b[6], b21 = b[7], b22 = b[8];
+
+  let res = [];
+  res[0] = a00 * b00 + a01 * b10 + a02 * b20;
+  res[1] = a00 * b01 + a01 * b11 + a02 * b21;
+  res[2] = a00 * b02 + a01 * b12 + a02 * b22;
+  res[3] = a10 * b00 + a11 * b10 + a12 * b20;
+  res[4] = a10 * b01 + a11 * b11 + a12 * b21;
+  res[5] = a10 * b02 + a11 * b12 + a12 * b22;
+  res[6] = a20 * b00 + a21 * b10 + a22 * b20;
+  res[7] = a20 * b01 + a21 * b11 + a22 * b21;
+  res[8] = a20 * b02 + a21 * b12 + a22 * b22;
+
+  return res;
+}
+
 
 /**
  * Multiplicación de dos matrices

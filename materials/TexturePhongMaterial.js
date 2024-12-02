@@ -1,3 +1,6 @@
+/**
+ * Combines the phong lighting with the ability to add textures to the object.
+ */
 class TexturePhongMaterial extends Material {
     constructor(gl, image, Ka = [0, 0, 0], Kd = [0, 0, 0], Ks = [0, 0, 0], shininess = 1, opacidad = 1) {
         let vertexShaderSource =

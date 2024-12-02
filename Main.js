@@ -173,7 +173,7 @@ window.addEventListener("load", async function (evt) {
         cubePosition[i + 1][j + 1][k + 1][0] = i;
         cubePosition[i + 1][j + 1][k + 1][1] = j;
         cubePosition[i + 1][j + 1][k + 1][2] = k;
-        cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
+        cubePosition[i + 1][j + 1][k + 1][3] =  viewMatrix;
         cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
 
@@ -236,6 +236,7 @@ window.addEventListener("load", async function (evt) {
           viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k));
           viewMatrix = multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3]);
           updatedViewMatrix.push(viewMatrix);
+        
           viewMatrix = tmp;
         }
       }
@@ -331,6 +332,8 @@ window.addEventListener("load", async function (evt) {
     if (pixelColor[3] !== 0) {
       last_picked = pixelColor[0];
       geometry[last_picked].border = true;
+      console.log(last_picked);
+      console.log(geometry[last_picked]);
     }
     // Se dio click en el fondo
     else {
@@ -374,7 +377,7 @@ window.addEventListener("load", async function (evt) {
       mainAxis = 1;
     else if (key === 'd')
       mainAxis = 2;
-    if (key === 'A'){
+    else if (key === 'A'){
       mainAxis = 0;
       direction = 1;
     }else if (key === 'S'){
