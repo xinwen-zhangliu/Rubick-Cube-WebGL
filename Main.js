@@ -14,14 +14,16 @@ window.requestAnimFrame = (function () {
     };
 })();
 
-// stores each of the cubes coordinates, rotatrion and traslation matrixes
+// stores each of the cubes coordinates, rotation and traslation matrixes
+// RANGES
+// [x 0-2][y 0-2][z 0-2][0-4] 
 var cubePosition = [
   [[[], [], []], [[], [], []], [[], [], []]],
   [[[], [], []], [[], [], []], [[], [], []]],
   [[[], [], []], [[], [], []], [[], [], []]]
 ];
 
-// where we're going to store the Cubes here
+// where we're going to store the 27 cube objects 
 var geometry = [];
 
 /**
@@ -58,16 +60,15 @@ function setRotationMatrix(x, y, z, m) {
 }
 
 window.addEventListener("load", async function (evt) {
-  // we load the texture for each cube
+  let texCubo = await loadImage("texturas/prisma_rectangular.png");
   const gl = document.getElementById("the_canvas").getContext("webgl2");
-  // set variable canvas height, as window height 
+  // set variable canvas height/width, as window height/width
   gl.canvas.width = window.innerWidth;
   gl.canvas.height = window.innerHeight;
   if (!gl) throw "WebGL no soportado";
 
-  // the viewMatrix, of camera
+  // the view matrix, of camera, we'll use it in draw()
   let viewMatrix;
-
   let projectionMatrix = perspective(75 * Math.PI / 180, gl.canvas.width / gl.canvas.height, 1, 2000);
 
   let light = new LuzPuntual(
@@ -151,14 +152,12 @@ window.addEventListener("load", async function (evt) {
   var cameraRadius = 20.0;
   var THETA = radians(45);
   var PHI = radians(45);
-  
   var eye = {
     x: cameraRadius * Math.sin(PHI) * Math.sin(THETA),
     y: cameraRadius * Math.cos(PHI),
     z: cameraRadius * Math.sin(PHI) * Math.cos(THETA)
   };
   
-  // we create a new camera for the scene with eye = camera position
   let camera = new OrbitCamera(
     eye, // posición
     { x: 0, y: 0, z: 0 }, // centro de interés
@@ -187,31 +186,31 @@ window.addEventListener("load", async function (evt) {
     }
   }
 
-  function initGeo() {
-    geometry = [];
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        for (let k = -1; k <= 1; k++) {
-          let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
-          cubePosition[i + 1][j + 1][k + 1][0] = i;
-          cubePosition[i + 1][j + 1][k + 1][1] = j;
-          cubePosition[i + 1][j + 1][k + 1][2] = k;
-          cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
-          //cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  // function initGeo() {
+  //   geometry = [];
+  //   for (let i = -1; i <= 1; i++) {
+  //     for (let j = -1; j <= 1; j++) {
+  //       for (let k = -1; k <= 1; k++) {
+  //         let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
+  //         cubePosition[i + 1][j + 1][k + 1][0] = i;
+  //         cubePosition[i + 1][j + 1][k + 1][1] = j;
+  //         cubePosition[i + 1][j + 1][k + 1][2] = k;
+  //         cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
+  //         //cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
 
-          geometry.push(new Cubo(
-            gl,
-            //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
-            new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-            viewMatrix
-          ));
-        }
-      }
-    }
-  }
+  //         geometry.push(new Cubo(
+  //           gl,
+  //           //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
+  //           new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
+  //           viewMatrix
+  //         ));
+  //       }
+  //     }
+  //   }
+  // }
 
-  window.initGeo = initGeo;
+  // window.initGeo = initGeo;
 
   /**
    * Draws the scene
@@ -228,7 +227,7 @@ window.addEventListener("load", async function (evt) {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // we'll store the update views for each cube
+    // we'll store the updated views for each cube
     let updatedViewMatrix = [];
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
@@ -361,21 +360,32 @@ window.addEventListener("load", async function (evt) {
   document.addEventListener("keydown", (evt) => {
 
 
-    let key = evt.key.toLowerCase();
+    let key = evt.key;
+
     let mainAxis, direction = 0;
 
-    /* Activar el movimiento según la tecla presionada. */
+   
+    /**
+     * Assigning the axis and irection according the key pressed
+     */
     if (key === 'a')
       mainAxis = 0;
     else if (key === 's')
       mainAxis = 1;
     else if (key === 'd')
       mainAxis = 2;
-    else if (key === 'ShiftLeft')
+    if (key === 'A'){
+      mainAxis = 0;
       direction = 1;
-    else if (key === 'ShiftRight')
+    }else if (key === 'S'){
+      mainAxis = 1;
       direction = 1;
+    }else if (key === 'D'){
+      mainAxis = 2;
+      direction = 1;
+    }
 
+    
 
     if (pixelColor[3] !== 0 && isAnimating == false) {
       console.log(last_picked);
