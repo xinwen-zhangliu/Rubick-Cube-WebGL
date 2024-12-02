@@ -125,10 +125,11 @@ function update(mainAxis, direction, value) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
+          console.log(cubePosition[x + 1][y + 1][z + 1][3]);
           let tx, ty, tz, ogx, ogy, newcoor;
 
-          let i = cubePosition[x + 1][y + 1][z + 1][0] ;
-          let j = cubePosition[x + 1][y + 1][z + 1][1] ;
+          let i = cubePosition[x + 1][y + 1][z + 1][0];
+          let j = cubePosition[x + 1][y + 1][z + 1][1];
           let k = cubePosition[x + 1][y + 1][z + 1][2];
 
           newcoor  = multiplyMatrixByVector(createRotationMatrix(mainAxis, direction), [i,j,k]);
@@ -137,57 +138,10 @@ function update(mainAxis, direction, value) {
           tx = newcoor[0] - i;
           ty = newcoor[1] - j;
           tz = newcoor[2] - k;
-          
-          // console.log(cubePosition[x + 1][y + 1][z + 1][0], 
-          //   cubePosition[x + 1][y + 1][z + 1][1], 
-          //   cubePosition[x + 1][y + 1][z + 1][2]);
-          // switch (mainAxis) {
-          //   case 0:
-          //     // ogx = cubePosition[x + 1][y + 1][z + 1][1];
-          //     // ogy = cubePosition[x + 1][y + 1][z + 1][2];
-          //     // newcoor = rotateCoordinates(ogx, ogy, direction);
-          //     cubePosition[x + 1][y + 1][z + 1][1] = newcoor.x;
-          //     cubePosition[x + 1][y + 1][z + 1][2] = newcoor.y;
-          //     // tx = 0;
-          //     // ty =   newcoor.x - ogx;
-          //     // tz = newcoor.y - ogy;
-
-          //     break;
-          //   case 1:
-          //     // ogx = cubePosition[x + 1][y + 1][z + 1][0];
-          //     // ogy = cubePosition[x + 1][y + 1][z + 1][2];
-          //     // newcoor = rotateCoordinates(ogx, ogy, direction);
-          //     cubePosition[x + 1][y + 1][z + 1][0] = newcoor.x;
-          //     cubePosition[x + 1][y + 1][z + 1][2] = newcoor.y;
-          //     // tx = newcoor.x - ogx;
-          //     // ty = 0;
-          //     // tz = newcoor.y - ogy;
-
-          //     break;
-          //   case 2:
-          //     // ogx = cubePosition[x + 1][y + 1][z + 1][0];
-          //     // ogy = cubePosition[x + 1][y + 1][z + 1][1];
-              
-          //     // newcoor = rotateCoordinates(ogx, ogy, direction);
-          //     // console.log(newcoor);
-          //     cubePosition[x + 1][y + 1][z + 1][0] = newcoor.x;
-          //     cubePosition[x + 1][y + 1][z + 1][1] = newcoor.y;
-          //     tx = newcoor.x - ogx;
-          //     ty = newcoor.y - ogy;
-          //     tz = 0;
-
-          //     break;
-          // }
-
 
           cubePosition[x + 1][y + 1][z + 1][0]  = newcoor[0];
           cubePosition[x + 1][y + 1][z + 1][1]  = newcoor[1];
           cubePosition[x + 1][y + 1][z + 1][2]  = newcoor[2];
-          // console.log(cubePosition[x + 1][y + 1][z + 1][0], 
-          //   cubePosition[x + 1][y + 1][z + 1][1], 
-          //   cubePosition[x + 1][y + 1][z + 1][2]);
-          //   console.log(tx, ty, tz);
-          // console.log(cubePosition[x + 1][y + 1][z + 1][3]);
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
           r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
           // console.log(r);
@@ -196,6 +150,7 @@ function update(mainAxis, direction, value) {
           r[3], r[4], r[5], ty,
           r[6], r[7], r[8], tz,
           0,0,0,1];
+          console.log(cubePosition[x + 1][y + 1][z + 1][3]);
         }
       }
     }
