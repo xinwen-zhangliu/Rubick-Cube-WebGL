@@ -1,4 +1,4 @@
-// Es importante el async
+
 
 /**
  * Provides requestAnimationFrame in a cross browser way.
@@ -14,38 +14,58 @@ window.requestAnimFrame = (function () {
     };
 })();
 
+// stores each of the cubes coordinates, rotatrion and traslation matrixes
 var cubePosition = [
   [[[], [], []], [[], [], []], [[], [], []]],
   [[[], [], []], [[], [], []], [[], [], []]],
   [[[], [], []], [[], [], []], [[], [], []]]
 ];
 
+// where we're going to store the Cubes here
 var geometry = [];
 
+/**
+ * Returns the rotation axis of the cube
+ * @param {number} x coordinate
+ * @param {number} y coordinate
+ * @param {number} z coordinate
+ * @returns the rotation axis
+ */
 function getRotationAxis(x, y, z) {
-  // console.log("get rotation AXIS");
-  // console.log(cubePosition[x + 1][y + 1][z + 1][3]);
   return cubePosition[x + 1][y + 1][z + 1][3];
 }
 
+/**
+ * returns the rotation matrix of the cube 
+ * @param {number} x coordinate
+ * @param {number} y coordinate
+ * @param {number} z coordinate
+ * @returns the rotation matrix of the cube 
+ */
 function getRotationMatrix(x, y, z) {
   return cubePosition[x + 1][y + 1][z + 1][4];
 }
 
+/**
+ * sets a nuew rotation matrix for the cube
+ * @param {number} x coordinate
+ * @param {number} y coordinate
+ * @param {number} z coordinate
+ * @param {Array} m the new rotation matrix
+ */
 function setRotationMatrix(x, y, z, m) {
   cubePosition[x + 1][y + 1][z + 1][4] = m;
-  // console.log("set rotation matrix");
-  // console.log(m);
 }
 
 window.addEventListener("load", async function (evt) {
+  // we load the texture for each cube
   const gl = document.getElementById("the_canvas").getContext("webgl2");
   // set variable canvas height, as window height 
   gl.canvas.width = window.innerWidth;
   gl.canvas.height = window.innerHeight;
   if (!gl) throw "WebGL no soportado";
 
-
+  // the viewMatrix, of camera
   let viewMatrix;
 
   let projectionMatrix = perspective(75 * Math.PI / 180, gl.canvas.width / gl.canvas.height, 1, 2000);
@@ -127,33 +147,26 @@ window.addEventListener("load", async function (evt) {
   gl.enable(gl.DEPTH_TEST);
 
 
-
+  // there variables are used to calculate an initial isometric view of the cube
   var cameraRadius = 20.0;
   var THETA = radians(45);
   var PHI = radians(45);
-  //var eye = new Vector3(5.0, 15.0, 40.0);
+  
   var eye = {
     x: cameraRadius * Math.sin(PHI) * Math.sin(THETA),
     y: cameraRadius * Math.cos(PHI),
     z: cameraRadius * Math.sin(PHI) * Math.cos(THETA)
   };
-  var at = (0.0, 0.0, 1.0);
-  var up = (0.0, 1.0, 0.0);
-
-
-  // textura 
-  let texCubo = await loadImage("texturas/prisma_rectangular.png");
-  //let geometry = []
-
-
+  
+  // we create a new camera for the scene with eye = camera position
   let camera = new OrbitCamera(
     eye, // posición
     { x: 0, y: 0, z: 0 }, // centro de interés
     { x: 0, y: 1, z: 0 }, // vector hacia arriba
   );
+  
+  
   // There are 27 little cubes in a 3x3x3 Rubik's cube, we set the positions of each cube 
-  // var cubePosition = [];
-
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       for (let k = -1; k <= 1; k++) {
@@ -167,7 +180,6 @@ window.addEventListener("load", async function (evt) {
 
         geometry.push(new Cubo(
           gl,
-          //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
           new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
           viewMatrix
         ));
@@ -202,6 +214,7 @@ window.addEventListener("load", async function (evt) {
   window.initGeo = initGeo;
 
   /**
+   * Draws the scene
    */
   function draw() {
 
@@ -215,6 +228,7 @@ window.addEventListener("load", async function (evt) {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // we'll store the update views for each cube
     let updatedViewMatrix = [];
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
@@ -223,14 +237,10 @@ window.addEventListener("load", async function (evt) {
           viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k));
           viewMatrix = multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3]);
           updatedViewMatrix.push(viewMatrix);
-
           viewMatrix = tmp;
         }
       }
     }
-
-
-
 
     // Se dibujan los objetos con el material de selección
     for (let i = 0; i < geometry.length; i++) {
@@ -267,6 +277,8 @@ window.addEventListener("load", async function (evt) {
     }
 
   }
+  
+  // setting global access to draw the rotations
   window.draw = draw;
   draw();
 
@@ -282,24 +294,9 @@ window.addEventListener("load", async function (evt) {
   let last_picked = -1;
 
 
-  // variables for face dragging
-  let isDragging = false;
-  let startX, startY, endX, endY;
-  let selectedFace = null;
-  let x, y, z = 0;
   // El manejador de eventos para detectar donde se pulso el botón del ratón
   gl.canvas.addEventListener("mousedown", (evt) => {
-    ///---------------
-    const mousePos = getMousePositionInElement(evt, gl.canvas);
-
-    // The beginning positions of the dragging
-    isDragging = true;
-    startX = mousePos.x;
-    startY = mousePos.y;
-
-    // ---------------
-
-
+    
 
     // Se obtiene la posición del ratón dentro del canvas
     mouse_position = getMousePositionInElement(evt, gl.canvas);
@@ -319,8 +316,6 @@ window.addEventListener("load", async function (evt) {
     //  en el último parámetro
     gl.readPixels(mouse_position.x, mouse_position.y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixelColor);
 
-    // console.log(pixelColor[0]);
-    // console.log(pixelColor[0] % 9);
     // Se libera la textura
     gl.bindTexture(gl.TEXTURE_2D, null);
     // Se libera el frame buffer
@@ -335,21 +330,11 @@ window.addEventListener("load", async function (evt) {
 
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if (pixelColor[3] !== 0) {
-
-
-
-
       last_picked = pixelColor[0];
       geometry[last_picked].border = true;
-      console.log(geometry[last_picked]);
-
-      // console.log(getRotationAxis(1,1,1));
-      // console.log([x, y, z]);
-      // console.log(cubePosition[Math.round(x) + 1][Math.round(y) + 1][Math.round(z) + 1][3]);
     }
     // Se dio click en el fondo
     else {
-      // console.log("fondo");
       last_picked = -1;
       selectedFace = null;
     }
@@ -359,28 +344,7 @@ window.addEventListener("load", async function (evt) {
   });
 
 
-  // gl.canvas.addEventListener("mousemove", (evt) => {
-  //   if (!isDragging) return;
-
-  //   const mousePos = getMousePositionInElement(evt, gl.canvas);
-  //   // console.log(mousePos);
-  //   endX = mousePos.x;
-  //   endY = mousePos.y;
-  // });
-
-
-  // gl.canvas.addEventListener("mouseup", (evt) => {
-  //   if (!isDragging) return;
-
-  //   isDragging = false;
-
-  //   // Calculate drag direction
-  //   const dragVector = { x: endX - startX, y: endY - startY };
-
-  //   // Determine the rotation based on the drag
-
-
-  // });
+  
 //   let keysPressed = {};
 //   document.addEventListener('keydown', (event) => {
 //     keysPressed[event.key] = true;

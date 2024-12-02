@@ -76,51 +76,44 @@ function getMousePositionInElement(evt, element) {
  * @param {number} mainAxis  x : 0, y : 1, z : 2
  */
 function rotation(cube, mainAxis, direction) {
-  
+
   currentAngle += rotationAngle;
 
   for (let x = -1; x < 2; x++) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
-       //console.log(cubePosition[x + 1][y + 1][z + 1][mainAxis],Math.round(cube.transform[(mainAxis * 4) + 3]));
+        //console.log(cubePosition[x + 1][y + 1][z + 1][mainAxis],Math.round(cube.transform[(mainAxis * 4) + 3]));
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === Math.round(cube.transform[(mainAxis * 4) + 3])) {
-          
+
           if (x == 0 && y == 0 && z == 0) {
             continue;
           }
           const m = getRotationMatrix(x, y, z);
           const rotationMatrix = rotate(radians(direction === 0 ? rotationAngle : -rotationAngle), mainAxis);
-          console.log( multiply(m, rotationMatrix));
+          //console.log(multiply(m, rotationMatrix));
           setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
+        }
       }
     }
-  }
-  
 
-  window.draw();
-  
-  if (currentAngle >= 90) {
-    clearInterval(interval); // Stop animation
-    currentAngle = 0; // Reset for the next rotation
-    isAnimating = false;
-    for (x = -1; x < 2; x++) {
-          for (y = -1; y < 2; y++) {
-            for (z = -1; z < 2; z++) {
-              swap(x, y, z, i, j, k, val);
-            }
-          }
-        }
+
+    window.draw();
+
+    if (currentAngle >= 90) {
+      clearInterval(interval); // Stop animation
+      currentAngle = 0; // Reset for the next rotation
+      isAnimating = false;
+      //rotateIndices(mainAxis, direction, cube);
+    }
+
   }
 }
-
-}
-
 
 function rotateIndices(mainAxis, direction, cube) {
 
-  let cubex = Math.round(cube.transform[3]) +1;
-  let cubey = Math.round(cube.transform[7]) +1;
-  let cubez = Math.round(cube.transform[11]) +1;
+  let cubex = Math.round(cube.transform[3]) + 1;
+  let cubey = Math.round(cube.transform[7]) + 1;
+  let cubez = Math.round(cube.transform[11]) + 1;
 
   let len = 3;
 
@@ -130,59 +123,55 @@ function rotateIndices(mainAxis, direction, cube) {
       for (let j = i; j < len - 1; j++) {
 
         let temp;
-        switch(mainAxis){
+        switch (mainAxis) {
           case 0:
-            
-            temp = cubePosition[cubex][i][j][4];
-           
-            cubePosition[cubex][i][j]                     [4]= cubePosition[cubex][ len - 1 - j + i][i][4];
-            cubePosition[cubex][ len - 1 - j + i][i][4]       = cubePosition[cubex][ len - 1][len - 1 - j + i][4];
-            cubePosition[cubex][len - 1][len - 1 - j + i] [4]= cubePosition[cubex][ j]              [len - 1 ][4];
-            cubePosition[cubex][j][len - 1]               [4]= temp;
+            console.log(cubePosition[cubex][i][j][3]);
+            // temp = cubePosition[cubex][i][j][4];
+
+            // cubePosition[cubex][i][j][4] = cubePosition[cubex][len - 1 - j + i][i][4];
+            // cubePosition[cubex][len - 1 - j + i][i][4] = cubePosition[cubex][len - 1][len - 1 - j + i][4];
+            // cubePosition[cubex][len - 1][len - 1 - j + i][4] = cubePosition[cubex][j][len - 1][4];
+            // cubePosition[cubex][j][len - 1][4] = temp;
 
             temp = cubePosition[cubex][i][j][3];
-           
-            cubePosition[cubex][i][j]                     [3]= cubePosition[cubex][ len - 1 - j + i][i][3];
-            cubePosition[cubex][ len - 1 - j + i][i][3]       = cubePosition[cubex][ len - 1][len - 1 - j + i][3];
-            cubePosition[cubex][len - 1][len - 1 - j + i] [3]= cubePosition[cubex][ j]              [len - 1 ][3];
-            cubePosition[cubex][j][len - 1]               [3]= temp;
+
+            cubePosition[cubex][i][j][3] = cubePosition[cubex][len - 1 - j + i][i][3];
+            cubePosition[cubex][len - 1 - j + i][i][3] = cubePosition[cubex][len - 1][len - 1 - j + i][3];
+            cubePosition[cubex][len - 1][len - 1 - j + i][3] = cubePosition[cubex][j][len - 1][3];
+            cubePosition[cubex][j][len - 1][3] = temp;
 
             break;
           case 1:
             console.log(cubey);
             temp = cubePosition[i][cubey][j][4];
-            cubePosition[i][cubey][j]                     [4]= cubePosition[cubey][ len - 1 - j + i][i][4];
-            cubePosition[len - 1 - j + i][cubey][i]       [4]= cubePosition[cubey][ len - 1]        [len - 1 - j + i] [4];
-            cubePosition[len - 1][cubey][len - 1 - j + i] [4]= cubePosition[cubey][ j]              [len - 1 ][4];
-            cubePosition[j][cubey][len - 1]               [4]= temp;
+            cubePosition[i][cubey][j][4] = cubePosition[cubey][len - 1 - j + i][i][4];
+            cubePosition[len - 1 - j + i][cubey][i][4] = cubePosition[cubey][len - 1][len - 1 - j + i][4];
+            cubePosition[len - 1][cubey][len - 1 - j + i][4] = cubePosition[cubey][j][len - 1][4];
+            cubePosition[j][cubey][len - 1][4] = temp;
 
-            temp = cubePosition[i][cubey][j][3];
-            cubePosition[i][cubey][j]                     [3]= cubePosition[cubey][ len - 1 - j + i][i][3];
-            cubePosition[len - 1 - j + i][cubey][i]       [3]= cubePosition[cubey][ len - 1]        [len - 1 - j + i] [3];
-            cubePosition[len - 1][cubey][len - 1 - j + i] [3]= cubePosition[cubey][ j]              [len - 1 ][3];
-            cubePosition[j][cubey][len - 1]               [3]= temp;
+            // temp = cubePosition[i][cubey][j][3];
+            // cubePosition[i][cubey][j][3] = cubePosition[cubey][len - 1 - j + i][i][3];
+            // cubePosition[len - 1 - j + i][cubey][i][3] = cubePosition[cubey][len - 1][len - 1 - j + i][3];
+            // cubePosition[len - 1][cubey][len - 1 - j + i][3] = cubePosition[cubey][j][len - 1][3];
+            // cubePosition[j][cubey][len - 1][3] = temp;
 
             break;
           case 2:
             temp = cubePosition[i][j][cubez][4];
-            cubePosition[i][j][cubez]                     [4]= cubePosition[ len - 1 - j + i][i][cubez][4];
-            cubePosition[len - 1 - j + i][i][cubez]       [4]= cubePosition[ len - 1]        [len - 1 - j + i] [cubez][4];
-            cubePosition[len - 1][len - 1 - j + i][cubez] [4]= cubePosition[ j]              [len - 1 ][cubez][4];
-            cubePosition[j][len - 1][cubez]               [4]= temp;
+            cubePosition[i][j][cubez][4] = cubePosition[len - 1 - j + i][i][cubez][4];
+            cubePosition[len - 1 - j + i][i][cubez][4] = cubePosition[len - 1][len - 1 - j + i][cubez][4];
+            cubePosition[len - 1][len - 1 - j + i][cubez][4] = cubePosition[j][len - 1][cubez][4];
+            cubePosition[j][len - 1][cubez][4] = temp;
 
 
-            temp = cubePosition[i][j][cubez][3];
-            cubePosition[i][j][cubez]                     [3]= cubePosition[ len - 1 - j + i][i][cubez][3];
-            cubePosition[len - 1 - j + i][i][cubez]       [3]= cubePosition[ len - 1]        [len - 1 - j + i] [cubez][3];
-            cubePosition[len - 1][len - 1 - j + i][cubez] [3]= cubePosition[ j]              [len - 1 ][cubez][3];
-            cubePosition[j][len - 1][cubez]               [3]= temp;
+            // temp = cubePosition[i][j][cubez][3];
+            // cubePosition[i][j][cubez][3] = cubePosition[len - 1 - j + i][i][cubez][3];
+            // cubePosition[len - 1 - j + i][i][cubez][3] = cubePosition[len - 1][len - 1 - j + i][cubez][3];
+            // cubePosition[len - 1][len - 1 - j + i][cubez][3] = cubePosition[j][len - 1][cubez][3];
+            // cubePosition[j][len - 1][cubez][3] = temp;
             break;
         }
 
-        // matrix[i][j] = { i: len - 1 - j + i, j: i };
-        // matrix[len - 1 - j + i][i] = { i: len - 1, j: len - 1 - j + 1 };
-        // matrix[len - 1][len - 1 - j + i] = { i: j, j: len - 1 };
-        // matrix[j][len - 1] = { i: i, j: j };
       }
       len--;
     }
@@ -193,31 +182,31 @@ function rotateIndices(mainAxis, direction, cube) {
       for (let j = i; j < len - 1; j++) {
 
         let temp;
-        switch(mainAxis){
+        switch (mainAxis) {
           case 0:
-            
+
             temp = cubePosition[cubex][i][j][4];
 
-            cubePosition[cubex][i][j]                     [4]= cubePosition[cubex][j][len - 1][4]; 
-            cubePosition[cubex][j][len - 1]               [4]= cubePosition[cubex][len - 1][len - 1 - j + i][4]; 
-            cubePosition[cubex][len - 1][len - 1 - j + i] [4]= cubePosition[cubex][len - 1 - j + i][i][4]; 
-            cubePosition[cubex][len - 1 - j + i][i]       [4]= temp;
+            cubePosition[cubex][i][j][4] = cubePosition[cubex][j][len - 1][4];
+            cubePosition[cubex][j][len - 1][4] = cubePosition[cubex][len - 1][len - 1 - j + i][4];
+            cubePosition[cubex][len - 1][len - 1 - j + i][4] = cubePosition[cubex][len - 1 - j + i][i][4];
+            cubePosition[cubex][len - 1 - j + i][i][4] = temp;
 
             // cubePosition[cubex][ len - 1 - j + i][i]=temp;
             // cubePosition[cubex][ len - 1]        [len - 1 - j + 1] =cubePosition[cubex][len - 1 - j + i][i];
             // cubePosition[cubex][ j]              [len - 1 ]=cubePosition[cubex][len - 1][len - 1 - j + i];
             // cubePosition[cubex][i][j]   =cubePosition[cubex][j][len - 1];
-           
+
             break;
           case 1:
             console.log(cubey);
             temp = cubePosition[i][cubey][j][4];
 
 
-            cubePosition[i][cubey][j]                     [4]= cubePosition[j][cubey][len - 1][4]; 
-            cubePosition[j][cubey][len - 1]               [4]= cubePosition[len - 1][cubey][len - 1 - j + i][4]; 
-            cubePosition[len - 1][cubey][len - 1 - j + i] [4]= cubePosition[len - 1 - j + i][cubey][i][4]; 
-            cubePosition[len - 1 - j + i][cubey][i]       [4]= temp;
+            cubePosition[i][cubey][j][4] = cubePosition[j][cubey][len - 1][4];
+            cubePosition[j][cubey][len - 1][4] = cubePosition[len - 1][cubey][len - 1 - j + i][4];
+            cubePosition[len - 1][cubey][len - 1 - j + i][4] = cubePosition[len - 1 - j + i][cubey][i][4];
+            cubePosition[len - 1 - j + i][cubey][i][4] = temp;
 
             // cubePosition[cubey][ len - 1 - j + i][i] = temp;                     
             // cubePosition[cubey][ len - 1]        [len - 1 - j + 1]  = cubePosition[len - 1 - j + i][cubey][i]       
@@ -227,46 +216,21 @@ function rotateIndices(mainAxis, direction, cube) {
             break;
           case 2:
             temp = cubePosition[i][j][cubez][4];
-            cubePosition[i][j]                    [cubez][4] = cubePosition[j][len - 1][cubez][4]; 
-            cubePosition[j][len - 1]              [cubez][4] = cubePosition[len - 1][len - 1 - j + i][cubez][4]; 
-            cubePosition[len - 1][len - 1 - j + i][cubez][4] = cubePosition[len - 1 - j + i][i][cubez][4]; 
-            cubePosition[len - 1 - j + i][i]      [cubez][4] = temp;
+            cubePosition[i][j][cubez][4] = cubePosition[j][len - 1][cubez][4];
+            cubePosition[j][len - 1][cubez][4] = cubePosition[len - 1][len - 1 - j + i][cubez][4];
+            cubePosition[len - 1][len - 1 - j + i][cubez][4] = cubePosition[len - 1 - j + i][i][cubez][4];
+            cubePosition[len - 1 - j + i][i][cubez][4] = temp;
 
             break;
         }
 
-        // matrix[len - 1 - j + i][i] = { i: i, j: j };
-        // matrix[len - 1][len - 1 - j + 1] = { i: len - 1 -j + i, j:i };
-        // matrix[j][len - 1 ] = { i: len-1, j:len - 1 - j + i };
-        // matrix[i][j] = { i: j, j: len-1 };
+    
       }
       len--;
     }
   }
 
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      for (let k = -1; k <= 1; k++) {
-        let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
-        cubePosition[i + 1][j + 1][k + 1][0] = i;
-        cubePosition[i + 1][j + 1][k + 1][1] = j;
-        cubePosition[i + 1][j + 1][k + 1][2] = k;
-        cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
-        
-      }
-    }
-  }
 
-  //       geometry = [];
-  //       geometry.push(new Cubo(
-  //         gl,
-  //         //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
-  //         new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-  //         viewMatrix
-  //       ));
-  //     }
-  //   }
-  // }
 }
 
 // function updatePosition(face){
