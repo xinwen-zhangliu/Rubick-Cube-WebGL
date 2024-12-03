@@ -87,13 +87,34 @@ function rotation(value, mainAxis, direction) {
       for (let z = -1; z < 2; z++) {
         //console.log(cubePosition[x + 1][y + 1][z + 1][mainAxis],Math.round(cube.transform[(mainAxis * 4) + 3]));
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
-
+          let m = getRotationMatrix(x,y,z);
           if (x == 0 && y == 0 && z == 0) {
+           
             continue;
           }
-          const m = getRotationMatrix(x, y, z);
-          const rotationMatrix = rotate(radians(direction === 1 ? rotationAngle : -rotationAngle), mainAxis);
-          setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
+          console.log(getRotationAxis(x,y,z));
+          let axis = getRotationAxis(x,y,z).slice((mainAxis*4), (mainAxis*4)+3);
+          console.log("AXIS", axis);
+          // let axis = [];
+          // if (mainAxis == 0){
+          //   axis = [1,0,0];
+          // }else if (mainAxis == 1){
+          //   axis = [0,1,0];
+          // }else {
+          //   axis = [0,0,1];
+          // }
+
+          if (!direction) {
+            m = multiply(m,rotate(rotationAngle, axis)); // [][][] [3]
+          } else {
+            m = multiply(m,rotate(rotationAngle,
+                            negate(axis)));
+          }
+          setRotationMatrix(x,y,z,m);
+
+          // const m = getRotationMatrix(x, y, z);
+          // const rotationMatrix = rotate(radians(direction === 1 ? rotationAngle : -rotationAngle), mainAxis);
+          // setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
         }
       }
     }
@@ -124,7 +145,7 @@ function update(mainAxis, direction, value) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
-          console.log("antes", cubePosition[x + 1][y + 1][z + 1][3]);
+          // console.log("antes", cubePosition[x + 1][y + 1][z + 1][3]);
           let tx, ty, tz, ogx, ogy, newcoor;
 
           // let i = cubePosition[x + 1][y + 1][z + 1][0];
@@ -136,8 +157,8 @@ function update(mainAxis, direction, value) {
           let k = cubePosition[x + 1][y + 1][z + 1][2];
 
           newcoor  = multiplyMatrixByVector(createRotationMatrix(mainAxis, direction), [i,j,k]);
-          console.log("previous ",i,j,k);
-          console.log("new", newcoor);
+          // console.log("previous ",i,j,k);
+          // console.log("new", newcoor);
           
           tx = newcoor[0] - i;
           ty = newcoor[1] - j;
@@ -152,7 +173,7 @@ function update(mainAxis, direction, value) {
           r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
 
 
-          console.log(newcoor[0], newcoor[1], newcoor[2]);
+         //  console.log(newcoor[0], newcoor[1], newcoor[2]);
           //let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
           // r = get3x3(cubePosition[i + 1][j + 1][k + 1][4]);
           // r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
@@ -162,12 +183,12 @@ function update(mainAxis, direction, value) {
           // r[3], r[4], r[5],  0,//j*1.1,// ty*1.1,// 1.1*newcoor[1],
           // r[6], r[7], r[8],  0,//k*1.1,// tz*1.1,// 1.1*newcoor[2],
           // 0,0,0,1]);
-          // cubePosition[x + 1][y + 1][z + 1][3] = translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
-          // [r[0], r[1], r[2], tx*1.1,//i*1.1,// // 1.1*newcoor[0],
-          // r[3], r[4], r[5],  ty*1.1,//j*1.1,// // 1.1*newcoor[1],
-          // r[6], r[7], r[8],  tz*1.1,//k*1.1,// // 1.1*newcoor[2],
-          // 0,0,0,1];
-          console.log("despues",cubePosition[x + 1][y + 1][z + 1][3]);
+          cubePosition[x + 1][y + 1][z + 1][3] = //translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
+          [r[0], r[1], r[2], i*1.1,// tx*1.1,//// // 1.1*newcoor[0],
+          r[3], r[4], r[5],  j*1.1,// ty*1.1,//// // 1.1*newcoor[1],
+          r[6], r[7], r[8],  k*1.1,// tz*1.1,//// // 1.1*newcoor[2],
+          0,0,0,1];
+          // console.log("despues",cubePosition[x + 1][y + 1][z + 1][3]);
         }
       }
     }

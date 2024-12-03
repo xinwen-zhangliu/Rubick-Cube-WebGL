@@ -50,26 +50,19 @@
 //   ];
 // }
 
+/**
+ * Turn every value negative
+ * @param {Array} u  values
+ * @returns the resulting array
+ */
+function negate(u) {
+  var result = [];
+  for (var i = 0; i < u.length; ++i) {
+    result.push(-u[i]);
+  }
 
-
-function _argumentsToArray( args )
-{
-    return [].concat.apply( [], Array.prototype.slice.apply(args) );
+  return result;
 }
-
-// /**
-//  * Turn every value negative
-//  * @param {Array} u  values
-//  * @returns the resulting array
-//  */
-// function negate(u) {
-//   var result = [];
-//   for (var i = 0; i < u.length; ++i) {
-//     result.push(-u[i]);
-//   }
-
-//   return result;
-// }
 
 /**
  * Creates an array of arguments
@@ -318,6 +311,27 @@ function subtract(a, b) {
  */
 function distance(a, b) {
   return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) + Math.pow(b.z - a.z, 2));
+}
+
+function rotate( angle, axis )
+{
+
+    var x = axis[0];
+    var y = axis[1];
+    var z = axis[2];
+
+    var c = Math.cos( radians(angle) );
+    var omc = 1.0 - c;
+    var s = Math.sin( radians(angle) );
+
+    var result = [
+         x*x*omc + c,   x*y*omc - z*s, x*z*omc + y*s, 0.0 ,
+         x*y*omc + z*s, y*y*omc + c,   y*z*omc - x*s, 0.0 ,
+         x*z*omc - y*s, y*z*omc + x*s, z*z*omc + c,   0.0 ,
+        0,0,0,1]
+    ;
+
+    return result;
 }
 
 /**
