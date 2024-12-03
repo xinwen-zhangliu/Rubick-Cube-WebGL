@@ -155,10 +155,10 @@ function update(mainAxis, direction, value) {
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
           r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
 
-          cubePosition[x + 1][y + 1][z + 1][3] = //translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
-          [r[0], r[1], r[2], tx*1.1,//i*1.1,// //// // 1.1*newcoor[0],
-          r[3], r[4], r[5],  ty*1.1,//j*1.1,// //// // 1.1*newcoor[1],
-          r[6], r[7], r[8],  tz*1.1,//k*1.1,// //// // 1.1*newcoor[2],
+          cubePosition[x + 1][y + 1][z + 1][3] = 
+          [r[0], r[1], r[2], tx*1.1,
+          r[3], r[4], r[5],  ty*1.1,
+          r[6], r[7], r[8],  tz*1.1,
           0,0,0,1];
          
         }

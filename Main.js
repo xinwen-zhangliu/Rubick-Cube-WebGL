@@ -242,7 +242,7 @@ window.addEventListener("load", async function (evt) {
       cubePosition[r][g][b][5].drawMaterial(gl,
         picking_material,
         projectionMatrix,
-        multiply(viewMatrix, translate((r-1) * 1.1, (g-1) * 1.1, (b-1) * 1.1)),
+        multiply(viewMatrix, translate((r - 1) * 1.1, (g - 1) * 1.1, (b - 1) * 1.1)),
         light);
     }
 
@@ -288,27 +288,27 @@ window.addEventListener("load", async function (evt) {
     //   viewMatrix = tmp;
     // }
 
-     for (let i = -1; i <= 1; i++) { 
-       for (let j = -1; j <= 1; j++) { 
-         for (let k = -1; k <= 1; k++) { 
-           let cube = cubePosition[i + 1][j + 1][k + 1][5]; 
-           var tmp = viewMatrix; 
-           //staticView.push(multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3])); 
-           // let coor = cubePosition[i + 1][j + 1][k + 1];
-           viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k)); 
-           viewMatrix = multiply(viewMatrix, translate(i * 1.1, j * 1.1, k * 1.1)); 
-           cube.draw(gl, projectionMatrix, viewMatrix, light); 
-             // Se dibuja el borde del objeto seleccionado 
-           if (cube.border) { 
-            gl.enable(gl.CULL_FACE); 
-            gl.cullFace(gl.FRONT); 
-            cube.drawMaterial(gl, borderMaterial, projectionMatrix, viewMatrix, light); 
-            gl.disable(gl.CULL_FACE); 
-          } 
-           viewMatrix = tmp; 
-         } 
-       } 
-     } 
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        for (let k = -1; k <= 1; k++) {
+          let cube = cubePosition[i + 1][j + 1][k + 1][5];
+          var tmp = viewMatrix;
+          //staticView.push(multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3])); 
+          // let coor = cubePosition[i + 1][j + 1][k + 1];
+          viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k));
+          viewMatrix = multiply(viewMatrix, translate(i * 1.1, j * 1.1, k * 1.1));
+          cube.draw(gl, projectionMatrix, viewMatrix, light);
+          // Se dibuja el borde del objeto seleccionado 
+          if (cube.border) {
+            gl.enable(gl.CULL_FACE);
+            gl.cullFace(gl.FRONT);
+            cube.drawMaterial(gl, borderMaterial, projectionMatrix, viewMatrix, light);
+            gl.disable(gl.CULL_FACE);
+          }
+          viewMatrix = tmp;
+        }
+      }
+    }
   }
 
   // setting global access to draw the rotations
@@ -379,35 +379,45 @@ window.addEventListener("load", async function (evt) {
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           for (let k = -1; k <= 1; k++) {
-                cubePosition[i + 1][j + 1][k + 1][5].border = false;
+            cubePosition[i + 1][j + 1][k + 1][5].border = false;
           }
         }
       }
+
     }
 
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if (pixelColor[3] !== 0) {
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          for (let k = -1; k <= 1; k++) {
+            cubePosition[i + 1][j + 1][k + 1][5].border = false;
+          }
+        }
+      }
       last_picked = [r, g, b];
       console.log("Last picked: " + last_picked);
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           for (let k = -1; k <= 1; k++) {
-              let x = cubePosition[i + 1][j + 1][k + 1][0];
-              let y = cubePosition[i + 1][j + 1][k + 1][1];
-              let z = cubePosition[i + 1][j + 1][k + 1][2];
-              if (x == (r-1) && y== (g-1) && z == (b-1))
+            let x = cubePosition[i + 1][j + 1][k + 1][0];
+            let y = cubePosition[i + 1][j + 1][k + 1][1];
+            let z = cubePosition[i + 1][j + 1][k + 1][2];
+            if (x == (r - 1) && y == (g - 1) && z == (b - 1)) {
+              console.log("COORDENADAS", x, y, z);
               cubePosition[i + 1][j + 1][k + 1][5].border = true;
+            }
+
           }
         }
       }
-      cubePosition[r][g][b][5].border = true;
+     
 
-      
+
     }
     // Se dio click en el fondo
     else {
       last_picked = [];
-      
     }
     // Una vez determinado si se selecciono o no un objeto se redibuja la escena
     draw();
@@ -454,14 +464,14 @@ window.addEventListener("load", async function (evt) {
               cubePosition[i + 1][j + 1][k + 1][1] == last_picked[1] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][2] == last_picked[2] - 1) {
 
-              if(mainAxis == 0){
+              if (mainAxis == 0) {
                 value = last_picked[0];
-              }else if(mainAxis == 1){
+              } else if (mainAxis == 1) {
                 value = last_picked[1]
-              }else {
+              } else {
                 value = last_picked[2];
               }
-              animationQueue.push({ value : (value-1), mainAxis, direction });
+              animationQueue.push({ value: (value - 1), mainAxis, direction });
             }
           }
         }
