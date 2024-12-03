@@ -301,6 +301,8 @@ window.addEventListener("load", async function (evt) {
     // we'll store the updated views for each cube
     let updatedViewMatrix = [];
 
+
+
     /* Dibujar los cubos que detectarán. */
     for (let i = 0; i < picking_colors.length; i++) {
       picking_material.color = picking_colors[i];
@@ -311,7 +313,7 @@ window.addEventListener("load", async function (evt) {
       cubePosition[r][g][b][5].drawMaterial(gl,
         picking_material,
         projectionMatrix,
-        multiply(viewMatrix, cubePosition[r][g][b][3]),
+        multiply(viewMatrix, translate((r-1) * 1.1, (g-1) * 1.1, (b-1) * 1.1)),
         light);
     }
 
@@ -367,13 +369,13 @@ window.addEventListener("load", async function (evt) {
            viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k)); 
            viewMatrix = multiply(viewMatrix, translate(i * 1.1, j * 1.1, k * 1.1)); 
            cube.draw(gl, projectionMatrix, viewMatrix, light); 
-          // Se dibuja el borde del objeto seleccionado 
+             // Se dibuja el borde del objeto seleccionado 
            if (cube.border) { 
-             gl.enable(gl.CULL_FACE); 
-             gl.cullFace(gl.FRONT); 
-             cube.drawMaterial(gl, borderMaterial, projectionMatrix, viewMatrix, light); 
-             gl.disable(gl.CULL_FACE); 
-           } 
+            gl.enable(gl.CULL_FACE); 
+            gl.cullFace(gl.FRONT); 
+            cube.drawMaterial(gl, borderMaterial, projectionMatrix, viewMatrix, light); 
+            gl.disable(gl.CULL_FACE); 
+          } 
            viewMatrix = tmp; 
          } 
        } 
@@ -445,13 +447,30 @@ window.addEventListener("load", async function (evt) {
 
     // Si ya existe un elemento seleccionado se le quita el atributo del borde
     if (last_picked.length > 0) {
-      cubePosition[r][g][b][5].border = false;
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          for (let k = -1; k <= 1; k++) {
+                cubePosition[i + 1][j + 1][k + 1][5].border = false;
+          }
+        }
+      }
     }
 
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if (pixelColor[3] !== 0) {
       last_picked = [r, g, b];
       console.log("Last picked: " + last_picked);
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          for (let k = -1; k <= 1; k++) {
+              let x = cubePosition[i + 1][j + 1][k + 1][0];
+              let y = cubePosition[i + 1][j + 1][k + 1][1];
+              let z = cubePosition[i + 1][j + 1][k + 1][2];
+              if (x == (r-1) && y== (g-1) && z == (b-1))
+              cubePosition[i + 1][j + 1][k + 1][5].border = true;
+          }
+        }
+      }
       cubePosition[r][g][b][5].border = true;
 
       //console.log(cubePosition[last_picked[0]][last_picked[1]][last_picked[2]][5]);
@@ -466,20 +485,6 @@ window.addEventListener("load", async function (evt) {
     draw();
   });
 
-
-
-  //   let keysPressed = {};
-  //   document.addEventListener('keydown', (event) => {
-  //     keysPressed[event.key] = true;
-
-  //     if (keysPressed['ShiftLeft'] && event.key == 'a') {
-  //         alert(event.key);
-  //     }
-  //  });
-
-  //  document.addEventListener('keyup', (event) => {
-  //     delete keysPressed[event.key];
-  //  });
 
   document.addEventListener("keydown", (evt) => {
 
@@ -509,10 +514,6 @@ window.addEventListener("load", async function (evt) {
       direction = 1;
     }
 
-    // // Normalizar y ajustar a las coordenadas de cubePosition
-    // let r = Math.ceil(last_picked[0] / 256 * 2); // mapea [0-255] a [0, 2]
-    // let g = Math.ceil(last_picked[1] / 256 * 2); // mapea [0-255] a [0, 2]
-    // let b = Math.ceil(last_picked[2] / 256 * 2); // mapea [0-255] a [0, 2]
 
     if (pixelColor[3] !== 0 && isAnimating == false) {
       console.log(last_picked);
@@ -524,12 +525,12 @@ window.addEventListener("load", async function (evt) {
               cubePosition[i + 1][j + 1][k + 1][0] == last_picked[0] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][1] == last_picked[1] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][2] == last_picked[2] - 1) {
-              console.log(last_picked);
-              console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][0], last_picked[0]);
-              console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][1], last_picked[1]);
-              console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][2], last_picked[2]);
+              // console.log(last_picked);
+              // console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][0], last_picked[0]);
+              // console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][1], last_picked[1]);
+              // console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][2], last_picked[2]);
 
-              console.log("Clicked: ", getCube(i, j, k));
+              // console.log("Clicked: ", getCube(i, j, k));
 
               if(mainAxis == 0){
                 value = last_picked[0];
