@@ -150,16 +150,10 @@ window.addEventListener("load", async function (evt) {
         let g = (j + 1) / 2;
         let b = (k + 1) / 2;
         picking_colors.push([r, g, b, 1]);
-        // console.log("[" + r + ", " + g + ", " + b + "]");
-        // console.log("{" + ((r * 2)) + ", " + ((g * 2)) + ", " + ((b * 2)) + "}\n");
       }
     }
   }
 
-
-  // for (let i = 0; i < 28; i++) {
-  //   picking_colors.push([i / 256, 0, 0, 1]);
-  // }
 
 
   // En la variable pixelColor se va a almacenar el color del pixel asociado con la posición del mouse
@@ -212,76 +206,11 @@ window.addEventListener("load", async function (evt) {
           viewMatrix
         );
 
-        // geometry.push(new Cubo(
-        //   gl,
-        //   new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-        //   viewMatrix
-        // ));
+
       }
     }
   }
 
-  /* Arreglo que contiene las viewMatrix de cada cubo. */
-  // let positions = [];
-
-  // for (let i = -1; i <= 1; i++) {
-  //   for (let j = -1; j <= 1; j++) {
-  //     for (let k = -1; k <= 1; k++) {
-  //       positions.push(translate(i * 1.1, j * 1.1, k * 1.1));
-  //     }
-  //   }
-  // }
-
-  // for (let i = 0; i < picking_colors.length; i++) {
-  //   const r = (picking_colors[i][0] * 2);
-  //   const g = (picking_colors[i][1] * 2);
-  //   const b = (picking_colors[i][2] * 2);
-
-  //   cubePosition[r][g][b][0] = r-1;
-  //   cubePosition[r][g][b][1] = g-1;
-  //   cubePosition[r][g][b][2] = b-1;
-
-  //   /* View matrix. */
-  //   cubePosition[r][g][b][3] = positions[i];
-
-  //   /* Rotation Matrix. */
-  //   cubePosition[r][g][b][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-
-  //   /* Cube. */
-  //   cubePosition[r][g][b][5] = new Cubo(
-  //     gl,
-  //     new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-  //     positions[i]
-  //   );
-  // }
-
-  // function initGeo() {
-  //   geometry = [];
-  //   for (let i = -1; i <= 1; i++) {
-  //     for (let j = -1; j <= 1; j++) {
-  //       for (let k = -1; k <= 1; k++) {
-  //         // let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
-  //         // cubePosition[i + 1][j + 1][k + 1][0] = i;
-  //         // cubePosition[i + 1][j + 1][k + 1][1] = j;
-  //         // cubePosition[i + 1][j + 1][k + 1][2] = k;
-  //         // cubePosition[i + 1][j + 1][k + 1][3] = viewMatrix;
-  //         // cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-
-
-  //         geometry.push(new Cubo(
-  //           gl,
-  //           //new PhongMaterial(gl, [0.1,0.1,0.1], [1, 0.2, 0.4], [0,0,0], 1),
-  //           new TexturePhongMaterial(gl, texCubo, [0, 0, 0], [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], 0.5, 1),
-  //           cubePosition[i + 1][j + 1][k + 1][3]
-  //         ));
-  //       }
-  //     }
-  //   }
-  // }
-
-  // window.initGeo = initGeo;
-
-  //let staticView = [];
 
   /**
    * Draws the scene
@@ -473,14 +402,13 @@ window.addEventListener("load", async function (evt) {
       }
       cubePosition[r][g][b][5].border = true;
 
-      //console.log(cubePosition[last_picked[0]][last_picked[1]][last_picked[2]][5]);
+      
     }
     // Se dio click en el fondo
     else {
       last_picked = [];
-      //selectedFace = null;
+      
     }
-
     // Una vez determinado si se selecciono o no un objeto se redibuja la escena
     draw();
   });
@@ -525,12 +453,6 @@ window.addEventListener("load", async function (evt) {
               cubePosition[i + 1][j + 1][k + 1][0] == last_picked[0] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][1] == last_picked[1] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][2] == last_picked[2] - 1) {
-              // console.log(last_picked);
-              // console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][0], last_picked[0]);
-              // console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][1], last_picked[1]);
-              // console.log("cube coor", cubePosition[i + 1][j + 1][k + 1][2], last_picked[2]);
-
-              // console.log("Clicked: ", getCube(i, j, k));
 
               if(mainAxis == 0){
                 value = last_picked[0];

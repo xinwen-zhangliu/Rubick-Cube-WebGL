@@ -11,6 +11,11 @@ Una vez que sabemos esto, podemos aplicar la rotación a estos. Para crear la an
 
 Una vez rotados y trasladados los cubos de la capa, estos se tiene que actualizar en nuestro arreglo, ya que ahora tiene una nueva posición.
 
+
+# Rotaciones
+
+Como sabemos nuestr cubo tiene una
+
 # Controles
 
 Una vez seleccionado un cubo, este se pude girar en base a los 3 ejes, x, y, z.

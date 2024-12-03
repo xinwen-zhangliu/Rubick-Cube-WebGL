@@ -97,7 +97,7 @@ function rotation(value, mainAxis, direction) {
           console.log("AXIS", axis);
 
 
-          if (!direction) {
+          if (direction) {
             m = multiply(m,rotate(rotationAngle, axis)); // [][][] [3]
           } else {
             m = multiply(m,rotate(rotationAngle,
@@ -109,12 +109,7 @@ function rotation(value, mainAxis, direction) {
       }
     }
 
-    var moves = [
-      "B", "S", "F",
-      "D", "E", "U",
-      "R", "M", "L",
-    ];
-    //initGeo();
+
     window.draw();
 
     if (currentAngle >= 90) {
@@ -122,7 +117,7 @@ function rotation(value, mainAxis, direction) {
       currentAngle = 0; // Reset for the next rotation
       isAnimating = false;
       update(mainAxis, direction, value);
-      //initGeo();
+
       
     }
 
@@ -138,14 +133,14 @@ function update(mainAxis, direction, value) {
           if (x == 0 && y == 0 && z == 0) {
             continue;
           }
-          // console.log("antes", cubePosition[x + 1][y + 1][z + 1][3]);
+          
           let tx, ty, tz, ogx, ogy, newcoor;
 
           let i = cubePosition[x + 1][y + 1][z + 1][0];
           let j = cubePosition[x + 1][y + 1][z + 1][1];
           let k = cubePosition[x + 1][y + 1][z + 1][2];
           
-          newcoor  = multiplyMatrixByVector(createRotationMatrix(mainAxis, !direction), [i,j,k]);
+          newcoor  = multiplyMatrixByVector(createRotationMatrix(mainAxis, direction), [i,j,k]);
           console.log("previous ",i,j,k);
           console.log("new", newcoor);
           
@@ -158,14 +153,14 @@ function update(mainAxis, direction, value) {
           cubePosition[x + 1][y + 1][z + 1][2]  = newcoor[2];
 
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
-          r = multiply3x3(createRotationMatrix(mainAxis, !direction), r);
+          r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
 
           cubePosition[x + 1][y + 1][z + 1][3] = //translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
           [r[0], r[1], r[2], tx*1.1,//i*1.1,// //// // 1.1*newcoor[0],
           r[3], r[4], r[5],  ty*1.1,//j*1.1,// //// // 1.1*newcoor[1],
           r[6], r[7], r[8],  tz*1.1,//k*1.1,// //// // 1.1*newcoor[2],
           0,0,0,1];
-          // console.log("despues", cubePosition[x + 1][y + 1][z + 1][3]);
+         
         }
       }
     }

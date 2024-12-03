@@ -313,6 +313,13 @@ function distance(a, b) {
   return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) + Math.pow(b.z - a.z, 2));
 }
 
+/**
+ * Returns a rotation array that can be applied to object to transform their positioning 
+ * on the 3D space
+ * @param {number} angle the angle of the turn
+ * @param {Array} axis the axis upon which to base the turn
+ * @returns resulting rotation array 
+ */
 function rotate( angle, axis )
 {
 
