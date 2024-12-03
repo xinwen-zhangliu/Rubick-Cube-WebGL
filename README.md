@@ -20,7 +20,7 @@ Como sabemos nuestr cubo tiene una
 
 Una vez seleccionado un cubo, este se pude girar en base a los 3 ejes, x, y, z.
 Los ejes siempre se mantienen estaticos en relación a la rotación del cubo, o sea, a cara superior del eje y siempre se mantendrá como la misma sin importar si se empiezan a girar las caras del cubo.
-
+```
        y
      /    \ 
    /        \
@@ -28,7 +28,7 @@ Los ejes siempre se mantienen estaticos en relación a la rotación del cubo, o 
 z  |  \  /   |     x
     \   |   /
       \ |  /
-
+```
 
 Para girar en relación a cada eje se presionan las siguientes teclas:
 X : a
