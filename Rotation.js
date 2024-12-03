@@ -26,6 +26,11 @@
  */
 
 
+/**
+ * direction : 0 
+ * direction : 1
+ */
+
 var rotationAngle = 10;  // factor of 90 so we can draw in between animations
 var animationTimer = 15; // delay for animation
 var currentAngle = 0;
@@ -144,16 +149,23 @@ function update(mainAxis, direction, value) {
 
 
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
-          //r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
+          r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
 
 
           console.log(newcoor[0], newcoor[1], newcoor[2]);
           //let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
-
-          // cubePosition[x + 1][y + 1][z + 1][3] = //translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
-          // [r[0], r[1], r[2], i*1.1,// tx*1.1,// 1.1*newcoor[0],
-          // r[3], r[4], r[5],  j*1.1,// ty*1.1,// 1.1*newcoor[1],
-          // r[6], r[7], r[8],  k*1.1,// tz*1.1,// 1.1*newcoor[2],
+          // r = get3x3(cubePosition[i + 1][j + 1][k + 1][4]);
+          // r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
+          // cubePosition[i + 1][j + 1][k + 1][4] = r;
+          //cubePosition[i + 1][j + 1][k + 1][4] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];//setRotation(axis, i, j, k); // multiply(createRotationMatrix(mainAxis, direction);
+          // [r[0], r[1], r[2], 0,//i*1.1,// tx*1.1,// 1.1*newcoor[0],
+          // r[3], r[4], r[5],  0,//j*1.1,// ty*1.1,// 1.1*newcoor[1],
+          // r[6], r[7], r[8],  0,//k*1.1,// tz*1.1,// 1.1*newcoor[2],
+          // 0,0,0,1]);
+          // cubePosition[x + 1][y + 1][z + 1][3] = translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
+          // [r[0], r[1], r[2], tx*1.1,//i*1.1,// // 1.1*newcoor[0],
+          // r[3], r[4], r[5],  ty*1.1,//j*1.1,// // 1.1*newcoor[1],
+          // r[6], r[7], r[8],  tz*1.1,//k*1.1,// // 1.1*newcoor[2],
           // 0,0,0,1];
           console.log("despues",cubePosition[x + 1][y + 1][z + 1][3]);
         }
@@ -161,6 +173,21 @@ function update(mainAxis, direction, value) {
     }
   }
 
+}
+
+function setRotation(axis, i, j, k){
+  let x =  cubePosition[i+1][j+1][k+1][4][(axis*4)];
+  let y =  cubePosition[i+1][j+1][k+1][4][(axis*4)+1];
+  let z =  cubePosition[i+1][j+1][k+1][4][(axis*4)+2];
+  let w =  cubePosition[i+1][j+1][k+1][4][(axis*4)+3];
+
+
+  let newMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  newMatrix[(axis*4)] = x;
+  newMatrix[(axis*4)+1] = y;
+  newMatrix[(axis*4)+2] = z;
+  newMatrix[(axis*4)+3] = w;
+  
 }
 
 function rotateCoordinates(x, y, direction) {
