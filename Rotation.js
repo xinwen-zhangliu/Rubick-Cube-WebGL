@@ -81,35 +81,49 @@ function getMousePositionInElement(evt, element) {
 function rotation(value, mainAxis, direction) {
 
   currentAngle += rotationAngle;
-  //let value = Math.round(cube.transform[(mainAxis * 4) + 3]);
+
   for (let x = -1; x < 2; x++) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
-        
+
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
-          
+
           if (x == 0 && y == 0 && z == 0) {
             continue;
           }
-          let m = getRotationMatrix(x,y,z);
-          console.log(getRotationAxis(x,y,z));
-          let axis = getRotationAxis(x,y,z).slice((mainAxis*4), (mainAxis*4)+3);
-          console.log("AXIS", axis);
 
+          // we get the rotation matrix so we can apply new rotation
+          let m = getRotationMatrix(x, y, z);
+          /**
+           * Now we get the transformation matrix for rotations that is updated with update()
+           * We only need to get the values that represent the x,y,z vectors 
+           * example for a neutral x-axis rotation: axis = (1,0,0)
+           * 
+           * Why we need this?
+           * Each cubie is displaced x,y,z coordinates from the center which is at (0,0,0)
+           * so whenever we turn a face its relative axises also change, but the rest of the
+           * cube is still bound to the starting axises. This causes a problem when we have
+           * multiple combined moves and each x,y,z vector of cubies hass a different relative axis
+           * upon which they turn. So we store the effects of a rotation in cubePosition[x][y][z][3]
+           * and which axises have been modified.
+           * 
+           */
+          let axis = getRotationAxis(x, y, z).slice((mainAxis * 4), (mainAxis * 4) + 3);  // [][][] [3]
 
+          // now we check the direction and apply the rotations
           if (direction) {
-            m = multiply(m,rotate(rotationAngle, axis)); // [][][] [3]
+            m = multiply(m, rotate(rotationAngle, axis));
           } else {
-            m = multiply(m,rotate(rotationAngle,
-                            negate(axis)));
+            m = multiply(m, rotate(rotationAngle,
+              negate(axis)));
           }
-          setRotationMatrix(x,y,z,m);
-
+          // set the new rotation for the cubie
+          setRotationMatrix(x, y, z, m);
         }
       }
     }
 
-
+    // redrawing the window to show the middle frames of rotation
     window.draw();
 
     if (currentAngle >= 90) {
@@ -117,50 +131,68 @@ function rotation(value, mainAxis, direction) {
       currentAngle = 0; // Reset for the next rotation
       isAnimating = false;
       update(mainAxis, direction, value);
-
-      
     }
 
   }
 }
 
+/**
+ * Updates the turned cubes with their new coordinates and transformation matrices
+ * @param {number} mainAxis the turn axis
+ * @param {null} direction the direction 0= cw, 1 = ccw
+ * @param {never} value which layer of the axis to turn
+ */
 function update(mainAxis, direction, value) {
 
   for (let x = -1; x < 2; x++) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
+          // we ignore the middle cube since it cannot be seen 
           if (x == 0 && y == 0 && z == 0) {
             continue;
           }
-          
-          let tx, ty, tz, ogx, ogy, newcoor;
 
+          let tx, ty, tz, newcoor;
+
+          // the original coordinates of the cube
           let i = cubePosition[x + 1][y + 1][z + 1][0];
           let j = cubePosition[x + 1][y + 1][z + 1][1];
           let k = cubePosition[x + 1][y + 1][z + 1][2];
-          
-          newcoor  = multiplyMatrixByVector(createRotationMatrix(mainAxis, direction), [i,j,k]);
-          console.log("previous ",i,j,k);
-          console.log("new", newcoor);
-          
+
+          /**
+           * If we multiply the coordinate vector with the rotation matrix 
+           * we get the new coordinates after the rotation.
+           */
+          newcoor = multiplyMatrixByVector(createRotationMatrix(mainAxis, direction), [i, j, k]);
+          // console.log("previous ",i,j,k);
+          // console.log("new", newcoor);
+
           tx = newcoor[0] - i;
           ty = newcoor[1] - j;
           tz = newcoor[2] - k;
 
-          cubePosition[x + 1][y + 1][z + 1][0]  = newcoor[0];
-          cubePosition[x + 1][y + 1][z + 1][1]  = newcoor[1];
-          cubePosition[x + 1][y + 1][z + 1][2]  = newcoor[2];
+          // we set the new coordinates of the cube after the rotation
+          cubePosition[x + 1][y + 1][z + 1][0] = newcoor[0];
+          cubePosition[x + 1][y + 1][z + 1][1] = newcoor[1];
+          cubePosition[x + 1][y + 1][z + 1][2] = newcoor[2];
 
+          /**
+           * We apply the new rotation to the old transformation matrix by multiplying
+           * since the transformation matrix is 4x4 we only need the x,y,z vectors 
+           * i.e. the top left 3x3
+           * the first 3 numbers of last column are the coordinates
+           */
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
           r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
 
-          cubePosition[x + 1][y + 1][z + 1][3] = 
-          [r[0], r[1], r[2], tx*1.1,
-          r[3], r[4], r[5],  ty*1.1,
-          r[6], r[7], r[8],  tz*1.1,
-          0,0,0,1];
-         
+          // we can set the new values, we do it this way because of the previous reason
+          cubePosition[x + 1][y + 1][z + 1][3] =
+            [r[0], r[1], r[2], tx * 1.1,
+            r[3], r[4], r[5], ty * 1.1,
+            r[6], r[7], r[8], tz * 1.1,
+              0, 0, 0, 1];
+
         }
       }
     }
@@ -168,33 +200,12 @@ function update(mainAxis, direction, value) {
 
 }
 
-function setRotation(axis, i, j, k){
-  let x =  cubePosition[i+1][j+1][k+1][4][(axis*4)];
-  let y =  cubePosition[i+1][j+1][k+1][4][(axis*4)+1];
-  let z =  cubePosition[i+1][j+1][k+1][4][(axis*4)+2];
-  let w =  cubePosition[i+1][j+1][k+1][4][(axis*4)+3];
-
-
-  let newMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-  newMatrix[(axis*4)] = x;
-  newMatrix[(axis*4)+1] = y;
-  newMatrix[(axis*4)+2] = z;
-  newMatrix[(axis*4)+3] = w;
-  
-}
-
-function rotateCoordinates(x, y, direction) {
-  if (!direction) {// clockwise
-    return { x: y, y: 2 - x };
-  }
-  return { x: 2 - y, y: x };
-}
-
-
-
-
-
-
+/**
+ * Returns a rotation matriix for a 90 degree turn based on direction and turn axis
+ * @param {number} axis 0 =x, 1 = y, z = 2
+ * @param {null} direction 0 clockwise, 1 counterclockwise
+ * @returns the rotation matrix 
+ */
 function createRotationMatrix(axis, direction = 0) {
   let matrix;
 
