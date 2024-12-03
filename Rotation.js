@@ -88,7 +88,6 @@ function rotation(value, mainAxis, direction) {
           }
           const m = getRotationMatrix(x, y, z);
           const rotationMatrix = rotate(radians(direction === 1 ? rotationAngle : -rotationAngle), mainAxis);
-
           setRotationMatrix(x, y, z, multiply(m, rotationMatrix));
         }
       }
@@ -120,7 +119,7 @@ function update(mainAxis, direction, value) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
-          console.log(cubePosition[x + 1][y + 1][z + 1][3]);
+          console.log("antes", cubePosition[x + 1][y + 1][z + 1][3]);
           let tx, ty, tz, ogx, ogy, newcoor;
 
           // let i = cubePosition[x + 1][y + 1][z + 1][0];
@@ -142,17 +141,21 @@ function update(mainAxis, direction, value) {
           cubePosition[x + 1][y + 1][z + 1][0]  = newcoor[0];
           cubePosition[x + 1][y + 1][z + 1][1]  = newcoor[1];
           cubePosition[x + 1][y + 1][z + 1][2]  = newcoor[2];
+
+
           let r = get3x3(cubePosition[x + 1][y + 1][z + 1][3]);
-          r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
+          //r = multiply3x3(createRotationMatrix(mainAxis, direction), r);
+
+
           console.log(newcoor[0], newcoor[1], newcoor[2]);
           //let viewMatrix = translate(i * 1.1, j * 1.1, k * 1.1);
 
-          cubePosition[x + 1][y + 1][z + 1][3] = //translate(newcoor[0],newcoor[1],newcoor[2]);
-          [r[0], r[1], r[2], 1.1*newcoor[0],
-          r[3], r[4], r[5],  1.1*newcoor[1],
-          r[6], r[7], r[8],  1.1*newcoor[2],
-          0,0,0,1];
-          console.log(cubePosition[x + 1][y + 1][z + 1][3]);
+          // cubePosition[x + 1][y + 1][z + 1][3] = //translate(1.1*newcoor[0],1.1*newcoor[1],1.1*newcoor[2]);
+          // [r[0], r[1], r[2], i*1.1,// tx*1.1,// 1.1*newcoor[0],
+          // r[3], r[4], r[5],  j*1.1,// ty*1.1,// 1.1*newcoor[1],
+          // r[6], r[7], r[8],  k*1.1,// tz*1.1,// 1.1*newcoor[2],
+          // 0,0,0,1];
+          console.log("despues",cubePosition[x + 1][y + 1][z + 1][3]);
         }
       }
     }
