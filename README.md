@@ -19,9 +19,23 @@ Como sabemos nuestr cubo tiene una
 # Controles
 
 Una vez seleccionado un cubo, este se pude girar en base a los 3 ejes, x, y, z.
-Para girar en relación a cada eje se presionan las siguientes teclasÑ
+Los ejes siempre se mantienen estaticos en relación a la rotación del cubo, o sea, a cara superior del eje y siempre se mantendrá como la misma sin importar si se empiezan a girar las caras del cubo.
+
+       y
+     /    \ 
+   /        \
+   |\      / |
+z  |  \  /   |     x
+    \   |   /
+      \ |  /
+
+
+Para girar en relación a cada eje se presionan las siguientes teclas:
 X : a
 Y : s
 Z : d
 
+
+
 También existe la opción girar las caras en sentido de las manecillas del reloj, o en sentido contrario a estas,  esto se logra presionando SHIFT al escoger un eje.
+

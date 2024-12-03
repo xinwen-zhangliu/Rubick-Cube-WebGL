@@ -26,10 +26,7 @@
  */
 
 
-/**
- * direction : 0 
- * direction : 1
- */
+
 
 var rotationAngle = 10;  // factor of 90 so we can draw in between animations
 var animationTimer = 15; // delay for animation

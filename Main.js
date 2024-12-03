@@ -143,6 +143,9 @@ window.addEventListener("load", async function (evt) {
 
   // El número de objetos de la escena, determina la cantidad de materiales, en este caso el indice el objeto en el arreglo geometry determina el color, en este caso solo se utiliza la componente roja para codificar el indice de la geometría lo que da un total de 256 objetos seleccionables, para tener más objetos seleccionables se pueden usar las componentes verde, azul y alfa para la codificación
   console.log("PICKING COLORS ");
+  /**
+   * If
+   */
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       for (let k = -1; k <= 1; k++) {
@@ -242,17 +245,14 @@ window.addEventListener("load", async function (evt) {
       cubePosition[r][g][b][5].drawMaterial(gl,
         picking_material,
         projectionMatrix,
+        /**
+         * como queremos siempre saber la ubicacion estatica del cubo clickeado siempre 
+         * generamos todos de la misma manera.
+         */
         multiply(viewMatrix, translate((r - 1) * 1.1, (g - 1) * 1.1, (b - 1) * 1.1)),
         light);
     }
 
-    // Se dibujan los objetos con el material de selección
-    // for (let i = 0; i < geometry.length; i++) {
-    //   // Al material plano de selección se le asocia cual es su color de la lista de colores, hay que recordar que cada objeto en el arreglo geometry tiene asociado un único color en el arreglo picking_colors
-    //   picking_material.color = picking_colors[i];
-    //   // Se utiliza la función drawMaterial para dibujar la geometría con el material de selección
-    //   geometry[i].drawMaterial(gl, picking_material, projectionMatrix, staticView[i], light);
-    // }
 
     // Se libera la textura
     gl.bindTexture(gl.TEXTURE_2D, null);
@@ -265,36 +265,12 @@ window.addEventListener("load", async function (evt) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
-    // for (let i = 0; i < picking_colors.length; i++) {
-    //   const r = (picking_colors[i][0] * 2);
-    //   const g = (picking_colors[i][1] * 2);
-    //   const b = (picking_colors[i][2] * 2);
-
-    //   let cube = cubePosition[r][g][b][5];
-    //   var tmp = viewMatrix;
-    //   //staticView.push(multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3]));
-    //   viewMatrix = multiply(viewMatrix, getRotationMatrix(r - 1, g - 1, b - 1));
-    //   viewMatrix = multiply(viewMatrix, translate(i * 1.1, j * 1.1, k * 1.1));
-    //   cube.draw(gl, projectionMatrix, viewMatrix, light);
-
-
-    //   // Se dibuja el borde del objeto seleccionado
-    //   if (cube.border) {
-    //     gl.enable(gl.CULL_FACE);
-    //     gl.cullFace(gl.FRONT);
-    //     cube.drawMaterial(gl, borderMaterial, projectionMatrix, viewMatrix, light);
-    //     gl.disable(gl.CULL_FACE);
-    //   }
-    //   viewMatrix = tmp;
-    // }
 
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
         for (let k = -1; k <= 1; k++) {
           let cube = cubePosition[i + 1][j + 1][k + 1][5];
           var tmp = viewMatrix;
-          //staticView.push(multiply(viewMatrix, cubePosition[i + 1][j + 1][k + 1][3])); 
-          // let coor = cubePosition[i + 1][j + 1][k + 1];
           viewMatrix = multiply(viewMatrix, getRotationMatrix(i, j, k));
           viewMatrix = multiply(viewMatrix, translate(i * 1.1, j * 1.1, k * 1.1));
           cube.draw(gl, projectionMatrix, viewMatrix, light);
