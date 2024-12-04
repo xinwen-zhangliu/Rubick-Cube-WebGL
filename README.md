@@ -14,7 +14,9 @@ Una vez rotados y trasladados los cubos de la capa, estos se tiene que actualiza
 
 # Rotaciones
 
-Como sabemos nuestr cubo tiene una
+Para rotar 
+
+![alt text](https://wikimedia.org/api/rest_v1/media/math/render/svg/80ff6ba71d60b7128098e1cbaf70c0e268421656)
 
 # Controles
 
