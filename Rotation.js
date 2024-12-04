@@ -37,17 +37,20 @@ var animationQueue = [];
 
 /**
  * Creates the animation from the given move
- * @param  action  {cube: ..., mainAxis: ..., direciton: ...}
+ * @param  action  {value: ..., mainAxis: ..., direciton: ...}
  */
 function animate(action) {
+  // is there is currently and animation we add the next one to the queue
   if (isAnimating) {
     animationQueue.push(action);
     return;
   }
 
   isAnimating = true;
+
   interval = setInterval(function () {
     rotation(action.value, action.mainAxis, action.direction);
+    // check for the next animation and execute
     if (!isAnimating && animationQueue.length > 0) {
       animate(animationQueue.shift());
     }
@@ -91,6 +94,7 @@ function rotation(value, mainAxis, direction) {
 
           // we get the rotation matrix so we can apply new rotation
           let m = getRotationMatrix(x, y, z);
+          
           /**
            * Now we get the transformation matrix for rotations that is updated with update()
            * We only need to get the values that represent the x,y,z vectors 
