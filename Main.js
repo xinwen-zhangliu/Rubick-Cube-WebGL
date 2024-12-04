@@ -295,7 +295,7 @@ window.addEventListener("load", async function (evt) {
 
   // la cámara registra su manejador de eventos
   camera.registerMouseEvents(gl.canvas, draw);
-  requestAnimFrame(draw); 
+  requestAnimFrame(draw);
 
   //////////////////////////////////////////////////
   // Se agrega el control para convertir la posición del mouse a una posición en pantalla y obtener el color de la textura asociada al frame buffer no visible
@@ -394,7 +394,7 @@ window.addEventListener("load", async function (evt) {
           }
         }
       }
-     
+
 
 
     }
