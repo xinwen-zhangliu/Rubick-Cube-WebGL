@@ -444,12 +444,12 @@ window.addEventListener("load", async function (evt) {
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           for (let k = -1; k <= 1; k++) {
-
+            //check that the x,y,z correspond with the picked cube
             if (
               cubePosition[i + 1][j + 1][k + 1][0] == last_picked[0] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][1] == last_picked[1] - 1 &&
               cubePosition[i + 1][j + 1][k + 1][2] == last_picked[2] - 1) {
-
+                // the value is the coordinate stored in the axis that was picked
               if (mainAxis == 0) {
                 value = last_picked[0];
               } else if (mainAxis == 1) {
@@ -463,6 +463,7 @@ window.addEventListener("load", async function (evt) {
         }
       }
     }
+    
     if (animationQueue.length != 0 && !isAnimating) {
       animate(animationQueue.shift());
       isAnimating = true;

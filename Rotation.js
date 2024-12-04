@@ -33,6 +33,7 @@ var animationTimer = 15; // delay for animation
 var currentAngle = 0;
 var interval;
 var isAnimating = false;
+// There cannot be two animations at the same so we have a queue
 var animationQueue = [];
 
 /**
