@@ -14,15 +14,12 @@ window.requestAnimFrame = (function () {
 
 // stores each of the cubes coordinates, rotation and traslation matrixes
 // RANGES
-// [x 0-2][y 0-2][z 0-2][0-4]
+// [x 0-2][y 0-2][z 0-2][0-5]
 var cubePosition = [
   [[[], [], []], [[], [], []], [[], [], []]],
   [[[], [], []], [[], [], []], [[], [], []]],
   [[[], [], []], [[], [], []], [[], [], []]]
 ];
-
-// where we're going to store the 27 cube objects
-var geometry = [];
 
 /**
  * Returns the rotation axis of the cube
@@ -145,6 +142,7 @@ window.addEventListener("load", async function (evt) {
   console.log("PICKING COLORS ");
   /**
    * Since RGB has 3 channels we can use it to store an absolute representation of the cube coordinates
+   * in the first 3 indexes
    */
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
@@ -466,6 +464,4 @@ window.addEventListener("load", async function (evt) {
       isAnimating = true;
     }
   });
-
-
 });
