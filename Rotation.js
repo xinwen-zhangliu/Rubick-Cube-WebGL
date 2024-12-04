@@ -85,7 +85,7 @@ function rotation(value, mainAxis, direction) {
   for (let x = -1; x < 2; x++) {
     for (let y = -1; y < 2; y++) {
       for (let z = -1; z < 2; z++) {
-
+        // the value is the layer , so we get all the cube from the same layer according to the rotation axis
         if (cubePosition[x + 1][y + 1][z + 1][mainAxis] === value) {
 
           if (x == 0 && y == 0 && z == 0) {
@@ -94,7 +94,7 @@ function rotation(value, mainAxis, direction) {
 
           // we get the rotation matrix so we can apply new rotation
           let m = getRotationMatrix(x, y, z);
-          
+
           /**
            * Now we get the transformation matrix for rotations that is updated with update()
            * We only need to get the values that represent the x,y,z vectors 
