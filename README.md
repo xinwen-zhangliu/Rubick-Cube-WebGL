@@ -18,7 +18,7 @@ Para rotar cada cara usamos la siguiente fórmula de rotación, la cual aplica l
 
 ![alt text](https://wikimedia.org/api/rest_v1/media/math/render/svg/80ff6ba71d60b7128098e1cbaf70c0e268421656)
 
-después de cada rotación se actualizan los axises de cada cubo, por ejemplo si una cara de gira 90° hacia la derecha sobre el eje z, se aplica la siguiente transformación sobre la mantriz anterior
+después de cada rotación se actualizan los axises de cada cubo, por ejemplo si una cara  gira 90° hacia la derecha sobre el eje z, se aplica la siguiente transformación sobre la mantriz anterior
 ```
 [  0, 1, 0,
   -1, 0, 0,
