@@ -1,3 +1,7 @@
+# Rubik's Cube WebGL  
+
+Esta es una implementación de cubo Rubik utilizando WebGL. 
+
 # Diseño
 El diseño del modelo del cubo Rubik se hace utilizando el objeto Cubo creado en clase. Un cubo Rubik de 3x3x3 está conformado de 27 cubos más chicos.
 
