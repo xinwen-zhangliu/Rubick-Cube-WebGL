@@ -232,6 +232,10 @@ window.addEventListener("load", async function (evt) {
     /* Dibujar los cubos que detectarán. */
     for (let i = 0; i < picking_colors.length; i++) {
       picking_material.color = picking_colors[i];
+      // normalize the values
+      // 0 * 2 = 0
+      // 0.5 * 2 = 1
+      // 1 * 2 = 2
       const r = (picking_colors[i][0] * 2);
       const g = (picking_colors[i][1] * 2);
       const b = (picking_colors[i][2] * 2);
