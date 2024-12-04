@@ -123,24 +123,6 @@ function translate(tx, ty, tz) {
   ];
 }
 
-// function translate3( x, y, z )
-// {
-//     if ( Array.isArray(x) && x.length == 3 ) {
-//         z = x[2];
-//         y = x[1];
-//         x = x[0];
-//     }
-
-    
-//     return [
-//       1, 0, 0, x,
-//       0, 1, 0, y,
-//       0, 0, 1, z,
-//       0, 0, 0, 1
-//     ];
-// }
-
-
 
 /**
  * Transformación de escalamiento
