@@ -18,27 +18,27 @@ Para rotar cada cara usamos la siguiente fórmula de rotación, la cual aplica l
 
 ![alt text](https://wikimedia.org/api/rest_v1/media/math/render/svg/80ff6ba71d60b7128098e1cbaf70c0e268421656)
 
-después de cada rotación se actualizan los axises de cada cubo, por ejemplo si una cara de gira 90° hacia la derecha sobre el eje z
+después de cada rotación se actualizan los axises de cada cubo, por ejemplo si una cara de gira 90° hacia la derecha sobre el eje z, se aplica la siguiente transformación sobre la mantriz anterior
 ```
 [  0, 1, 0,
   -1, 0, 0,
    0, 0, 1  ]
 ```
 
-la relación del eje z sobre esa capa no cambia por lo que la última fila no cambia, sin embargo, los ejes x y se intercambian y como la vista del plano se cambia el nuevo eje y es el eje x previo con rotaciones de sentido contrario.
+la relación del eje z sobre esa capa no cambia por lo que la última fila no cambia, sin embargo, los ejes x y y se intercambian y como la vista del plano se cambia, el nuevo eje y es el eje x previo con rotaciones de sentido contrario.
 
-Entonces utilizando es dos conceptos para la rotación podemos actualizar los nuevos estado de cada cubo después de girarse. Así es como el cubo se dibuja de manera correcta al combinar múltiples rotaciones. 
+Entonces utilizando es dos conceptos para la rotación podemos actualizar los nuevos estados de cada cubo después de girarse. Así es como el cubo se dibuja de manera correcta al combinar múltiples rotaciones. 
 
 # Selección de cubos
 
-La habilidad de saber cual cubo es seleccionado y deseccionado radica en la textura transparente que se dibuja. Esta sigue la misma transformación que los cubos, pero siempre manteniendo su estado relativo al eje. Por lo que la coordenada en cada punto en el espacio siempre se mantiene como la misma incluso si un nuevo  cubo toma ese lugar al rotarlo. 
+La habilidad de saber cual cubo es seleccionado y deseleccionado radica en la textura transparente que se dibuja. Esta sigue la misma transformación que los cubos, pero siempre manteniendo su estado relativo al eje. Por lo que la coordenada en cada punto en el espacio siempre se mantiene como la misma incluso si un nuevo  cubo toma ese lugar al rotarlo. 
 
 Como el r,g,b recibe valores de 0 a 1, se tiene que normalizar los valores antes de utilizarlos.
 
 # Controles
 
 Una vez seleccionado un cubo, este se pude girar en base a los 3 ejes, x, y, z.
-Los ejes siempre se mantienen estaticos en relación a la rotación del cubo, o sea, a cara superior del eje y siempre se mantendrá como la misma sin importar si se empiezan a girar las caras del cubo.
+Los ejes siempre se mantienen estaticos en relación a la rotación del cubo, o sea, la cara superior del eje y siempre se mantendrá como la misma sin importar si se empiezan a girar las caras del cubo.
 ```
        y
      /    \ 
@@ -54,7 +54,5 @@ X : a
 Y : s
 Z : d
 
-
-
-También existe la opción girar las caras en sentido de las manecillas del reloj, o en sentido contrario a estas,  esto se logra presionando SHIFT al escoger un eje.
+Presionar las teclas como minúsculas hace que giren las caras en sentido de las manecillas del reloj, y para que giren en sentido contrario a estas,  necesitamos presionar SHIFT al escoger un eje o usar la versión mayúscula.
 
