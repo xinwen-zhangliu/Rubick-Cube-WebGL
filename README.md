@@ -14,9 +14,26 @@ Una vez rotados y trasladados los cubos de la capa, estos se tiene que actualiza
 
 # Rotaciones
 
-Para rotar 
+Para rotar cada cara usamos la siguiente fórmula de rotación, la cual aplica la rotación sobre un axis arbitrario
 
 ![alt text](https://wikimedia.org/api/rest_v1/media/math/render/svg/80ff6ba71d60b7128098e1cbaf70c0e268421656)
+
+después de cada rotación se actualizan los axises de cada cubo, por ejemplo si una cara de gira 90° hacia la derecha sobre el eje z
+```
+[  0, 1, 0,
+  -1, 0, 0,
+   0, 0, 1  ]
+```
+
+la relación del eje z sobre esa capa no cambia por lo que la última fila no cambia, sin embargo, los ejes x y se intercambian y como la vista del plano se cambia el nuevo eje y es el eje x previo con rotaciones de sentido contrario.
+
+Entonces utilizando es dos conceptos para la rotación podemos actualizar los nuevos estado de cada cubo después de girarse. Así es como el cubo se dibuja de manera correcta al combinar múltiples rotaciones. 
+
+# Selección de cubos
+
+La habilidad de saber cual cubo es seleccionado y deseccionado radica en la textura transparente que se dibuja. Esta sigue la misma transformación que los cubos, pero siempre manteniendo su estado relativo al eje. Por lo que la coordenada en cada punto en el espacio siempre se mantiene como la misma incluso si un nuevo  cubo toma ese lugar al rotarlo. 
+
+Como el r,g,b recibe valores de 0 a 1, se tiene que normalizar los valores antes de utilizarlos.
 
 # Controles
 

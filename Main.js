@@ -144,7 +144,7 @@ window.addEventListener("load", async function (evt) {
   // El número de objetos de la escena, determina la cantidad de materiales, en este caso el indice el objeto en el arreglo geometry determina el color, en este caso solo se utiliza la componente roja para codificar el indice de la geometría lo que da un total de 256 objetos seleccionables, para tener más objetos seleccionables se pueden usar las componentes verde, azul y alfa para la codificación
   console.log("PICKING COLORS ");
   /**
-   * If
+   * Since RGB has 3 channels we can use it to store an absolute representation of the cube coordinates
    */
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
@@ -230,10 +230,6 @@ window.addEventListener("load", async function (evt) {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // we'll store the updated views for each cube
-    let updatedViewMatrix = [];
-
-
 
     /* Dibujar los cubos que detectarán. */
     for (let i = 0; i < picking_colors.length; i++) {
@@ -243,6 +239,7 @@ window.addEventListener("load", async function (evt) {
       const b = (picking_colors[i][2] * 2);
 
       cubePosition[r][g][b][5].drawMaterial(gl,
+        // we set the color according to the coordinate where the cube is 
         picking_material,
         projectionMatrix,
         /**
@@ -265,7 +262,10 @@ window.addEventListener("load", async function (evt) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
-
+    /**
+     * Now we can draw each cube, we know that the position and orientation of a cube
+     * is according to the current view applied with a rotation and a traslation
+     */
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
         for (let k = -1; k <= 1; k++) {
@@ -362,6 +362,11 @@ window.addEventListener("load", async function (evt) {
 
     }
 
+    /**
+     * Since we update the new coordinate after each turn, the indexes don't always match the coordinates 
+     * of the cube stored inside, so we need to check each cube until we find the corerct one.
+     */
+
     // Los colores en el arreglo picking_colors se construyen con la componente alfa igual a 1, mientras que el color del fondo tienen un alfa de 0
     if (pixelColor[3] !== 0) {
       for (let i = -1; i <= 1; i++) {
@@ -428,8 +433,11 @@ window.addEventListener("load", async function (evt) {
       direction = 1;
     }
 
-
-    if (pixelColor[3] !== 0 && isAnimating == false) {
+    /**
+     * Since we have access to the transparent texture we always know which cube is being clickes
+     * base on the coordinate system stored in rgb
+     */
+    if (pixelColor[3] !== 0) {
       console.log(last_picked);
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
